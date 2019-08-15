@@ -1,0 +1,35 @@
+baseURL = "http://example.org/"
+languageCode = "en-us"
+title = "guilherme torres"
+theme = "Niello"
+
+staticDir = ["static", "themes/Niello/static"]
+
+[params]
+keywords = ""
+description = "this webiste was made purposely shitty because i don't want anyone hiring me as a front end dev"
+copyright = "&#xA9; 2019 by guangmean. All Rights Reserved."
+google_ad_client = "ca-pub-******"
+ga = "UA-******"
+sharethis = ""
+
+[menu]
+    [[menu.niello]]
+    name = "welcome home"
+    url = "/"
+    weight = 1
+
+    [[menu.niello]]
+    name = "yes, please bother me"
+    url = "/contact/"
+    weight = 2
+
+    [[menu.niello]]
+    name = "literally who??"
+    url = "/about/"
+    weight = 3
+
+    [[menu.niello]]
+    name = "my arts and crafts"
+    url = "/art/"
+    weight = 4
