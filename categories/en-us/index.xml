@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>guilherme torres</title>
-    <link>http://example.org/</link>
-    <description>Recent content on guilherme torres</description>
+    <title>en-us on guilherme torres</title>
+    <link>http://example.org/categories/en-us/</link>
+    <description>Recent content in en-us on guilherme torres</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 16 Aug 2019 10:30:32 -0300</lastBuildDate>
     
-	<atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://example.org/categories/en-us/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
