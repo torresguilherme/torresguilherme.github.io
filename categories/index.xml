@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on guilherme torres</title>
-    <link>http://example.org/categories/</link>
+    <link>http://example.github.io/categories/</link>
     <description>Recent content in Categories on guilherme torres</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 16 Aug 2019 10:30:32 -0300</lastBuildDate>
     
-	<atom:link href="http://example.org/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://example.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>en-us</title>
-      <link>http://example.org/categories/en-us/</link>
+      <link>http://example.github.io/categories/en-us/</link>
       <pubDate>Fri, 16 Aug 2019 10:30:32 -0300</pubDate>
       
-      <guid>http://example.org/categories/en-us/</guid>
+      <guid>http://example.github.io/categories/en-us/</guid>
       <description></description>
     </item>
     
