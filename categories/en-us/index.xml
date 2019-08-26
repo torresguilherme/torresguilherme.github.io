@@ -6,10 +6,19 @@
     <description>Recent content in en-us on guilherme torres</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 16 Aug 2019 10:30:32 -0300</lastBuildDate>
+    <lastBuildDate>Sun, 25 Aug 2019 15:24:52 -0300</lastBuildDate>
     
 	<atom:link href="http://example.github.io/categories/en-us/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Day one: introduction (Basic Computer Graphics in a Week)</title>
+      <link>http://example.github.io/post/day_one_introduction_basic_computer_graphics_in_a_week/</link>
+      <pubDate>Sun, 25 Aug 2019 15:24:52 -0300</pubDate>
+      
+      <guid>http://example.github.io/post/day_one_introduction_basic_computer_graphics_in_a_week/</guid>
+      <description>Computer graphics has been one of my favorite topics to both study and cover in the last few years. In this series of posts, I intend to give you, whoever is reading this, the basic knowledge you need to know your way around this beautiful field of study, whether your intention is to be able to read papers about it, or to build applications, or just to impress your friends with knowledge.</description>
+    </item>
     
     <item>
       <title>Welcome Home</title>

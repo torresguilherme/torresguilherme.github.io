@@ -16,37 +16,60 @@
   
   <url>
     <loc>http://example.github.io/categories/</loc>
-    <lastmod>2019-08-16T10:30:32-03:00</lastmod>
+    <lastmod>2019-08-25T15:24:52-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
+    <loc>http://example.github.io/post/day_one_introduction_basic_computer_graphics_in_a_week/</loc>
+    <lastmod>2019-08-25T15:24:52-03:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://example.github.io/post/</loc>
-    <lastmod>2019-08-16T10:30:32-03:00</lastmod>
+    <lastmod>2019-08-25T15:24:52-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://example.github.io/tags/</loc>
-    <lastmod>2019-08-16T10:30:32-03:00</lastmod>
+    <lastmod>2019-08-25T15:24:52-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/tags/basic-cg-in-a-week/</loc>
+    <lastmod>2019-08-25T15:24:52-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/tags/computer-science/</loc>
+    <lastmod>2019-08-25T15:24:52-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/categories/en-us/</loc>
+    <lastmod>2019-08-25T15:24:52-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/tags/graphics/</loc>
+    <lastmod>2019-08-25T15:24:52-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/</loc>
+    <lastmod>2019-08-25T15:24:52-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://example.github.io/post/welcome-home/</loc>
     <lastmod>2019-08-16T10:30:32-03:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://example.github.io/categories/en-us/</loc>
-    <lastmod>2019-08-16T10:30:32-03:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.github.io/</loc>
-    <lastmod>2019-08-16T10:30:32-03:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>

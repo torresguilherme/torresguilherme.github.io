@@ -1,0 +1,205 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1">
+    <title>Day one: introduction (Basic Computer Graphics in a Week) - guilherme torres</title>
+
+    
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    
+    <link rel="stylesheet" href="/css/highlight.min.css">
+    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href="/css/diello.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-******",
+            enable_page_level_ads: true
+        });
+    </script>
+    
+    
+</head>
+
+
+<body>
+    <!--[if lte IE 9]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+    <![endif]-->
+
+  
+    <div class="flex-column">
+        <div class="ads">
+    
+    
+</div>
+
+        <div class="home">
+            <div class="logo">
+                <h1><a href="/">guilherme torres</a></h1>
+            </div>
+            <div class="navigation">
+    
+        
+        
+        
+        <a href="/" class="">home</a>
+        
+        <a href="/contact/" class="">yes, please bother me</a>
+        
+        <a href="/about/" class="">literally who??</a>
+        
+        <a href="/art/" class="">my arts and crafts</a>
+        
+        
+        <a href="javascript:void(0);" class="current">ARTICLE</a>
+        
+    
+</div>
+
+            <div>
+                <article>
+                    <h3>Day one: introduction (Basic Computer Graphics in a Week)</h3>
+                    <div class="less">
+                        <time>Published: Sunday, Aug 25, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;10 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 2045 words
+                    </div>
+                    <div class="em">
+
+<h3 id="computer-graphics-has-been-one-of-my-favorite-topics-to-both-study-and-cover-in-the-last-few-years-in-this-series-of-posts-i-intend-to-give-you-whoever-is-reading-this-the-basic-knowledge-you-need-to-know-your-way-around-this-beautiful-field-of-study-whether-your-intention-is-to-be-able-to-read-papers-about-it-or-to-build-applications-or-just-to-impress-your-friends-with-knowledge-all-of-this-in-a-week">Computer graphics has been one of my favorite topics to both study and cover in the last few years. In this series of posts, I intend to give you, whoever is reading this, the basic knowledge you need to know your way around this beautiful field of study, whether your intention is to be able to read papers about it, or to build applications, or just to impress your friends with knowledge. All of this in a week.</h3>
+
+<p>Okay, now, you probably won&rsquo;t be able to convey or make sense of all you&rsquo;re going to read in just a week, because it&rsquo;s a wide topic and it&rsquo;s not for everyone. Some people might like this, some people might not. But if you finish this series and it sparks a little bit of interest for graphics in your brain and you want to find more about it, I&rsquo;d say that my mission is accomplished.</p>
+
+<h3 id="what-you-need-to-know-before-you-read-this">What you need to know before you read this</h3>
+
+<p>Trust me, not much. I believe that a computer science freshman student has what it takes to understand the basics of graphics. Some linear algebra is needed, but this is going to be covered in the following post. Also, in order to understand lighting and materials, some calculus knowledge would be good, but I&rsquo;ll try to make it not mandatory.</p>
+
+<p>Also I&rsquo;ll assume the reader knows what I&rsquo;m talking about when I mention computer memory, processor, GPU, buses between these components, and well as some basic algorithm and data structure concepts, like trees, hashes, arrays and lists.</p>
+
+<h3 id="what-this-series-is-not">What this series is not</h3>
+
+<p>I&rsquo;m not trying to, and I don&rsquo;t think I would be able to make up for a substitute for a 60-hour university computer graphics course, so, keep that in mind. I&rsquo;m also not a PhD or someone incredibly acknowledgeable in this subject, so suggestions are always welcome.</p>
+
+<p>Also, I should make this clear, this is NOT a OpenGL/DirectX/Vulkan/Metal series. If you want to learn how to program graphics on practice, there are plenty of resources available and I even might do a series on that later on. Of course, practice is something that helps learning and improving, but I&rsquo;ll leave it up to you for now. Also, tools and APIs like these change all the time, or become obsolete, or are just abandoned. We saw that happen when Apple stopped supporting OpenGL on Macs, and how explicit APIs are being more looked upon in resume&rsquo;s for applicants to graphics research jobs in companies like Epic Games and iD Software. And we just witnessed how &ldquo;raytracing&rdquo; became a buzzword when the RTX graphics cards made it possible in real-time, even though it&rsquo;s a technique that had already existed for over 40 years. What I&rsquo;ll mention here is theory, algorithms and math, which is more important than how to use APIs or code. And the same concepts will apply no matter which API you use.</p>
+
+<p>And lastly, this isn&rsquo;t a course on how to use graphics applications, like Blender, or ZBrush. Instead, the intention is to understand what are the building blocks of those applications, and it may just be the first step towards your brand new, revolutionary graphics application, who knows?</p>
+
+<h3 id="let-s-get-down-to-business-what-is-computer-graphics">&ldquo;Let&rsquo;s get down to business. What IS computer graphics?&rdquo;</h3>
+
+<p>Computer graphics is the study of how to render (or if you&rsquo;d rather, how to draw) something based on a mathematical model of it. How this model is represented, how it is drawn and what are the intermediate steps, that we&rsquo;ll see later on in the series.</p>
+
+<p>The main goal of computer graphics is to make a rendered image as plausible as possible. That means, in an essence, how to make a image as realistic as possible. How do we find out if it&rsquo;s realistic? Well, it&rsquo;s nothing short of a Turing test for computer graphics. If you&rsquo;ve never heard of a Turing test in artificial intelligence, it&rsquo;s the evaluation of how well a machine can pass as a human being, according to the judgement of another human being. So, for images, we can make a <a href="https://www.theclassroom.com/difference-between-qualitative-quantitative-evaluation-8281411.html">qualitative evaluation</a>, considering the highly subjective essence of the matter.</p>
+
+<p>Let&rsquo;s try it out. Do you think this image is real of fake?</p>
+
+<p><img src="/images/bcgiaw/Glasses_800_edit.png" alt="" /></p>
+
+<p><em>Credit for the image goes to Gilles Tran</em></p>
+
+<p>As you might have thought, the answer is fake. This is an image generated by ray-tracing, and you can see that the surfaces are way too clean and smooth.</p>
+
+<p>A plausible question is: &ldquo;What if I don&rsquo;t want to make a realistic image? I&rsquo;ve seen toon-like games and they&rsquo;re kinda pretty&rdquo;. That is related to aesthetics, which is a complex topic in itself, that has been discussed to death between artists and philosophers, things that I&rsquo;m not, so I won&rsquo;t address that here. We&rsquo;ll consider that our goal is to make realistic images.</p>
+
+<h3 id="okay-i-understand-computer-graphics-is-the-study-of-how-to-make-plausible-images-from-zeroes-and-ones-but-how-exactly-computers-do-that">&ldquo;Okay, I understand, computer graphics is the study of how to make plausible images from zeroes and ones. But how exactly computers do that?&rdquo;</h3>
+
+<p>That&rsquo;s where we get into the graphics pipeline. In a very rough simplification, computers are essentially really potent calculators that make millions of operations (or depending on the nature of the operation, even billions) per second. So, suppose, in an abstract sense, that we have an object in memory which is represented mathematically. We&rsquo;ll pick up as an example one of the simplest objects to represent mathematically, a sphere. Of course we have ways to model other, more complex objects, and that is going to be addressed in day three, but for now, let&rsquo;s settle with the sphere, since it&rsquo;s simple. This is the formula that defines a sphere:</p>
+
+<p><img src="/images/bcgiaw/sphere-formula.gif" alt="Sphere formula" /></p>
+
+<p>where x, y and z are the coordinates in a 3-D space and R is the sphere radius.</p>
+
+<h3 id="so-all-we-need-right-now-is-to-draw-the-sphere-points-of-course-not-all-of-them-since-they-re-infinite-but-the-ones-that-are-visible-right">&ldquo;So, all we need right now is to draw the sphere points (of course, not all of them, since they&rsquo;re infinite, but the ones that are visible). Right?&rdquo;</h3>
+
+<p>Not quite. First, we need to know <strong>where</strong> do we draw them. In order to do that, we need to <strong>transform</strong> these points. Transforming can be seen as moving something from one space to another, and that is done in computer graphics mainly by using vector-matrix multiplications, as we&rsquo;re going to see in depth in day two. But, long story short. We need to know where it is located in the world, which is something that we&rsquo;ll call <strong>world space</strong>.</p>
+
+<p>Then we need to know its position relative to the scene camera. Oh, did I mention we also have a camera? The camera is really important, because it&rsquo;s the window through which the scene is viewed. As we&rsquo;ll see in depth in day two, a camera is defined by its <strong>position</strong> (a point in 3-D space, which we&rsquo;ll represent as a vector), its focus point, or how it is usually called, the <strong>eye</strong> (a vector in 3-D space) and the <strong>up</strong> vector (which is, you guessed it, another vector in 3-D space). This camera will also have a field of view, and a display ratio, which we&rsquo;ll see later on. For now, let&rsquo;s just accept that you need to know not only the sphere points&rsquo; positions on the world, but also relative to the camera, which can have lots of features. Once we know that, we know the model&rsquo;s location in <strong>view space</strong>, and this is done by another vector-matrix multiplication.</p>
+
+<p>So, given its relative to the camera, can we render yet? No, we can&rsquo;t, because we need to know how these points will be projected in a 2-D plane. Remember, our image is 2-D only. This is done by, yes, yet another vector-matrix multiplication. Only this time it will be different, because multiplying by a projection matrix will give you as a result a 2-D point. This is the point&rsquo;s location in the <strong>projection space</strong>.</p>
+
+<h3 id="okay-so-when-we-know-exactly-how-to-project-our-sphere-s-points-in-the-projection-space-can-we-draw-yet">Okay, so, when we know exactly how to project our sphere&rsquo;s points in the projection space, can we draw yet?</h3>
+
+<p>Guess what. No.</p>
+
+<p>You also need to know how the sphere interacts with the <strong>light</strong>. Light is really, really important, like, just as important as the camera. Because, without light, we see nothing.</p>
+
+<p>The interactions of the sphere with the light will be modelled by a <strong>material</strong>, which we&rsquo;ll cover in day four, as well as <strong>local illumination</strong>. You can think of a material just as a function, which takes inputs (in our case, light parameters) and sends an output (how the object in that specific point will look like after the light meets it). A.K.A., a color.</p>
+
+<p>This is a cilinder with a material applied to it, rendered by a simple OpenGL program. Notice how the color varies according to the lighting.</p>
+
+<p><img src="/images/bcgiaw/cilinder0.png" alt="" /></p>
+
+<h3 id="so-if-we-know-the-colors-too-can-we-render-the-sphere-yet">So if we know the colors too, can we render the sphere yet?</h3>
+
+<p><img src="/images/bcgiaw/aji-no.jpg" alt="" /></p>
+
+<p><em>(Image from the comic Appetite, credits to the Korean artist Lero.)</em></p>
+
+<p>Why not? Because there are many different ways of rendering, you have to pick one. Each one has its benefits and its cons. <strong>Rasterization</strong> is typically how it&rsquo;s done in games and applications that use real-time rendering (when each image render time takes <sup>1</sup>&frasl;<sub>30</sub> of a second or less). What is rasterization, you ask? Basically, it is drawing each one of the projected points individually, per pixel, according to their transformation which was mentioned above. Another rendering method is <strong>raytracing</strong>, which, instead, for each pixel, casts a ray, or many rays, in order to emulate how light works in real life. Because it&rsquo;s very close to what happens in reality, raytracing is known to produce very high quality images, but it takes longer to render as finding intersections between rays and objects, even if they&rsquo;re as simple as spheres, can be very costly operations. Raytracing will be covered in depth in day five, and in day six we&rsquo;ll see how to use it to make <strong>global illumination</strong>, which produces interesting results. These techniques are used when you can afford not to render in real time, as for example, in cinema animations.</p>
+
+<h3 id="finally-now-we-know-how-to-transform-the-points-to-a-2-d-space-we-know-how-the-sphere-interacts-with-light-and-we-know-exactly-how-to-do-the-rendering-can-we-draw-the-god-damn-sphere-yet">Finally, now we know how to transform the points to a 2-D space, we know how the sphere interacts with light and we know exactly how to do the rendering. Can we draw the god damn sphere yet?</h3>
+
+<p>Technically yes, you can. Congratulations, you have gone through an entire graphical pipeline. BUT, there is one thing we ought yet to cover, or this series would be incomplete.</p>
+
+<p>Our sphere is a static object. But <strong>what if it wasn&rsquo;t</strong>? It could be a person, and we know that a human being&rsquo;s geometry is highly deformable and pretty much the opposite of static. That&rsquo;s why we&rsquo;ll cover <strong>animation</strong> in the last day of this series, and yes, there are many, many ways of doing that. Naturally, each one has its pros and cons, and we will mention the state of the art for each case.</p>
+
+<h3 id="is-that-all">Is that all?</h3>
+
+<p>Not by a long shot. Graphics is a wide subject and if it couldn&rsquo;t be fully covered in many books already written, so it won&rsquo;t happen in a few blog posts. If you want to find out more, though, some pretty useful resources are:</p>
+
+<ul>
+<li>Real-time rendering, by Thomas Akenine-Möller and Eric Haines. Pretty expensive book, but it is a must-have. As the name suggests, it is focused at real time techniques, used in games and so on. I&rsquo;ve yet to find a book that is a godlike as this one in the field. <a href="http://www.realtimerendering.com/">They also have a website</a>, where you can find extra chapters to the latest edition on real time collisions and real-time raytracing</li>
+<li><a href="https://www.iquilezles.org/">Inigo Quilez&rsquo;s website</a>. This is a place where you can find artices on a wide variety of subjects on graphics.</li>
+<li><a href="http://www.realtimerendering.com/raytracinggems/">Raytracing gems, available for free in the Internet</a>.</li>
+<li>The Graphics Gems book series. Old, but reliable, and they have some pretty good maths tricks.</li>
+<li>Finally, if you want to see the hardcore, cutting-edge stuff, don&rsquo;t forget to check out <a href="https://arxiv.org/list/cs.GR/recent">Arxiv&rsquo;s graphics section</a>. You may have a glance of what future awaits us. Right as I&rsquo;m writing this, neural networks have been essential in order to do some of this progress, so you might want to have some machine learning background too.</li>
+</ul>
+
+<p>I really hope this journey takes you far and I can&rsquo;t wait to write more about it. If you have some feedback, feel free to contact me.</p>
+</div>
+                    <br />
+                    <br />
+                    <div class="less">Page link: <a href="/post/day_one_introduction_basic_computer_graphics_in_a_week/" class="pagelink">/post/day_one_introduction_basic_computer_graphics_in_a_week/</a></div>
+                    <div class="line-dotted"></div>
+                <article>
+            </div>
+            <footer>
+    <div>
+    
+        &#xA9; 2019 by guangmean. All Rights Reserved.
+    
+    </div>
+</footer>
+
+        </div>
+        <div class="ads">
+    
+    
+</div>
+
+    </div>
+
+
+  <script src="/js/vendor/modernizr-3.6.0.min.js"></script>
+<script src="/js/vendor/jquery-3.3.1.min.js"></script>
+<script>window.jQuery || document.write('<script src="\/js/vendor/jquery-3.3.1.min.js"><\/script>')</script>
+<script src="/js/plugins.js"></script>
+<script src="/js/main.js"></script>  
+
+<script src="/js/vendor/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad();</script>
+                                                       
+
+<script>                                             
+    window.ga = function () { ga.q.push(arguments) }; ga.q = []; ga.l = +new Date;
+ga('create', 'UA-******', 'auto'); ga('send', 'pageview')
+</script>                                            
+<script src="//www.google-analytics.com/analytics.js" async defer></script>
+
+
+</body>
+</html>
