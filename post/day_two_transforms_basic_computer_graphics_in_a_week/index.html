@@ -176,7 +176,7 @@
 
 <p>And now we can finally obtain our translation matrix <strong>T</strong>:</p>
 
-<p><img src="/images/bcgiaw/translatematrix.gif" alt="" /></p>
+<p><img src="/images/bcgiaw/translatematrix.png" alt="" /></p>
 
 <p>Multiplying <strong>T x S x R</strong> (yes, <strong>the order matters now</strong>. It didn&rsquo;t matter when we built the <strong>R</strong> matrix because it&rsquo;s a particular property of the rotation matrices, but remember that <strong>matrix multiplication is not a commutative operation</strong>! If you do it in another order, the results will not be what you expect. You want to rotate the model, then scale it, and then translate it), we obtain a new matrix. We&rsquo;ll name it <strong>M</strong>, after <strong>model</strong>.</p>
 
@@ -218,7 +218,7 @@
 
 <p>Now we need to translate our model so that it&rsquo;s going to be taken to the camera eye space, and then rotate it to be adjusted to the three camera basis vectors. We&rsquo;ll do it by multiplying these two matrices, and when we do that operation, we&rsquo;ll obtain our <strong>V</strong> matrix:</p>
 
-<p><img src="/images/bcgiaw/viewmatrix.gif" alt="" /></p>
+<p><img src="/images/bcgiaw/viewmatrix.png" alt="" /></p>
 
 <p>And when you multiply our model in the world space by this matrix, you have your model in view space.</p>
 
