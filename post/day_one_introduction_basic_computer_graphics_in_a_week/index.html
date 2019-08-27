@@ -68,7 +68,7 @@
                 <article>
                     <h3>Day one: introduction (Basic Computer Graphics in a Week)</h3>
                     <div class="less">
-                        <time>Published: Sunday, Aug 25, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;10 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 2045 words
+                        <time>Published: Sunday, Aug 25, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;10 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 2052 words
                     </div>
                     <div class="em">
 
@@ -118,7 +118,7 @@
 
 <p>Not quite. First, we need to know <strong>where</strong> do we draw them. In order to do that, we need to <strong>transform</strong> these points. Transforming can be seen as moving something from one space to another, and that is done in computer graphics mainly by using vector-matrix multiplications, as we&rsquo;re going to see in depth in day two. But, long story short. We need to know where it is located in the world, which is something that we&rsquo;ll call <strong>world space</strong>.</p>
 
-<p>Then we need to know its position relative to the scene camera. Oh, did I mention we also have a camera? The camera is really important, because it&rsquo;s the window through which the scene is viewed. As we&rsquo;ll see in depth in day two, a camera is defined by its <strong>position</strong> (a point in 3-D space, which we&rsquo;ll represent as a vector), its focus point, or how it is usually called, the <strong>eye</strong> (a vector in 3-D space) and the <strong>up</strong> vector (which is, you guessed it, another vector in 3-D space). This camera will also have a field of view, and a display ratio, which we&rsquo;ll see later on. For now, let&rsquo;s just accept that you need to know not only the sphere points&rsquo; positions on the world, but also relative to the camera, which can have lots of features. Once we know that, we know the model&rsquo;s location in <strong>view space</strong>, and this is done by another vector-matrix multiplication.</p>
+<p>Then we need to know its position relative to the scene camera. Oh, did I mention we also have a camera? The camera is really important, because it&rsquo;s the window through which the scene is viewed. As we&rsquo;ll see in depth in day two, a camera is defined by its position, its focus point, or how it is usually called, the <strong>eye</strong> (a vector in 3-D space), the <strong>at</strong> point, which is the point that our camera is focusing, and the <strong>up</strong> vector (which is, you guessed it, another vector in 3-D space). This camera will also have other parameters that are going to be used for projection, which we&rsquo;ll see later on. For now, let&rsquo;s just accept that you need to know not only the sphere points&rsquo; positions on the world, but also relative to the camera, which can have lots of features. Once we know that, we know the model&rsquo;s location in <strong>view space</strong>, and this is done by another vector-matrix multiplication.</p>
 
 <p>So, given its relative to the camera, can we render yet? No, we can&rsquo;t, because we need to know how these points will be projected in a 2-D plane. Remember, our image is 2-D only. This is done by, yes, yet another vector-matrix multiplication. Only this time it will be different, because multiplying by a projection matrix will give you as a result a 2-D point. This is the point&rsquo;s location in the <strong>projection space</strong>.</p>
 
@@ -161,6 +161,8 @@
 </ul>
 
 <p>I really hope this journey takes you far and I can&rsquo;t wait to write more about it. If you have some feedback, feel free to contact me.</p>
+
+<p><a href="/post/day_two_transforms_basic_computer_graphics_in_a_week/">Day two - transforms</a></p>
 </div>
                     <br />
                     <br />

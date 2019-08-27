@@ -6,10 +6,20 @@
     <description>Recent content in computer-science on guilherme torres</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 25 Aug 2019 15:24:52 -0300</lastBuildDate>
+    <lastBuildDate>Mon, 26 Aug 2019 07:17:46 -0300</lastBuildDate>
     
 	<atom:link href="http://example.github.io/tags/computer-science/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Day two: transforms (Basic Computer Graphics in a Week)</title>
+      <link>http://example.github.io/post/day_two_transforms_basic_computer_graphics_in_a_week/</link>
+      <pubDate>Mon, 26 Aug 2019 07:17:46 -0300</pubDate>
+      
+      <guid>http://example.github.io/post/day_two_transforms_basic_computer_graphics_in_a_week/</guid>
+      <description>Are you ready? This is when things get nasty. I advise you to read this post thrice if you really want to know what is going on. What I&amp;rsquo;m about to say here is essential to graphics and heavily relies on linear algebra, so I hope you did your homework. And without further ado, let&amp;rsquo;s get started.
+The preliminaries, or, what is a point, or a direction, and a matrix The most essential element of the Euclidean geometry and one of the things that every high school or college student in STEM had to deal with but yet, it is so hard to explain.</description>
+    </item>
     
     <item>
       <title>Day one: introduction (Basic Computer Graphics in a Week)</title>

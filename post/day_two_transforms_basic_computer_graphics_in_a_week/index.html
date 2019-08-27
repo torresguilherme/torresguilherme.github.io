@@ -1,0 +1,336 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1">
+    <title>Day two: transforms (Basic Computer Graphics in a Week) - guilherme torres</title>
+
+    
+    <meta name="keywords" content="">
+    <meta name="description" content="Our topic for day two of this series is how to transform points. Transforming means moving the points from one space to another, and this is essential for all graphics applications.">
+    <meta property="og:image", content=/images/bcgiaw/ddlc-natsuki-nazare.jpg>
+    
+    <link rel="stylesheet" href="/css/highlight.min.css">
+    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href="/css/diello.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-******",
+            enable_page_level_ads: true
+        });
+    </script>
+    
+    
+</head>
+
+
+<body>
+    <!--[if lte IE 9]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+    <![endif]-->
+
+  
+    <div class="flex-column">
+        <div class="ads">
+    
+    
+</div>
+
+        <div class="home">
+            <div class="logo">
+                <h1><a href="/">guilherme torres</a></h1>
+            </div>
+            <div class="navigation">
+    
+        
+        
+        
+        <a href="/" class="">home</a>
+        
+        <a href="/contact/" class="">yes, please bother me</a>
+        
+        <a href="/about/" class="">literally who??</a>
+        
+        <a href="/art/" class="">my arts and crafts</a>
+        
+        
+        <a href="javascript:void(0);" class="current">ARTICLE</a>
+        
+    
+</div>
+
+            <div>
+                <article>
+                    <h3>Day two: transforms (Basic Computer Graphics in a Week)</h3>
+                    <div class="less">
+                        <time>Published: Monday, Aug 26, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;16 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 3235 words
+                    </div>
+                    <div class="em">
+
+<h3 id="are-you-ready-this-is-when-things-get-nasty">Are you ready? This is when things get nasty.</h3>
+
+<p>I advise you to read this post thrice if you really want to know what is going on. What I&rsquo;m about to say here is essential to graphics and heavily relies on linear algebra, so I hope you did your homework. And without further ado, let&rsquo;s get started.</p>
+
+<h3 id="the-preliminaries-or-what-is-a-point-or-a-direction-and-a-matrix">The preliminaries, or, what is a point, or a direction, and a matrix</h3>
+
+<p>The most essential element of the Euclidean geometry and one of the things that every high school or college student in STEM had to deal with but yet, it is so hard to explain. A point is defined as <a href="https://en.wikipedia.org/wiki/Point_(geometry)">something that has no part</a>. That means, it can&rsquo;t be subdivided in parts. If you know Euclidean geometry, you sure have heard that a line segment has infinite points. And it makes sense to think that, if we had to mention a point&rsquo;s measurements, it would be <strong>zero</strong>. So how can a set of parts that have zero length have a finite sum?</p>
+
+<p>That&rsquo;s one of many dillemas about the building blocks of the Euclidean geometry. Richard Trudeau&rsquo;s godlike book <strong>The Non-Euclidean Revolution</strong> addresses those dillemas a lot better than I could, and if you have any interest in maths&rsquo; philosophy or history, that is a must read.</p>
+
+<p>But for now, we&rsquo;re going to work with Euclidean geometry, and we&rsquo;ll accept what is written in the Euclid&rsquo;s Elements as the truth because it makes it easy to represent a model in a computer as a set of points, or vertices, which we&rsquo;ll talk about in detail in <strong>day three</strong>. And that makes our lives easy because the only thing you need to define a point in Euclidean 3D space is three real numbers in a specific order, or, as you must have heard, <strong>a 3D vector</strong>.</p>
+
+<p><img src="/images/bcgiaw/this-is-a-point.gif" alt="" /></p>
+
+<p><em>This is a point in a 3D Euclidean space</em></p>
+
+<p>Both real numbers and vectors are types of <a href="https://en.wikipedia.org/wiki/Tensor">tensors</a>. A real number is a zero-dimensional array and a vector is a 1D array, which are ways to define tensors. You probably have heard of 2D tensors, which are popularly called <strong>matrices</strong>. Matrices are very important to us, because, by multiplying two matrices, you can transform from a space to another. <a href="http://mathworld.wolfram.com/MatrixMultiplication.html">This is a good read</a> if your matrix classes were a long time ago, or didn&rsquo;t take place yet.</p>
+
+<p><img src="/images/bcgiaw/this-is-a-matrix.gif" alt="" /></p>
+
+<p><em>This is a 4x4 matrix. We&rsquo;re going to see lots of those yet</em></p>
+
+<p>By analogy, when you multiply a <strong>N x M</strong> matrix by a vector in a <strong>M</strong>-dimensional space, the result is a <strong>N</strong>-dimensional vector, which is <strong>transformed</strong>. In a very rough simplification, transforming a point means switching its place. When you transform all the points of a model, thus, the model is succesfully transformed, you can go on with the graphics pipeline.</p>
+
+<p>If you didn&rsquo;t get what it means to transform yet, maybe some examples will help you. We have three ahead of us, and they are pretty much the first steps towards placing your object in the world to be rendered.</p>
+
+<h3 id="our-first-transform-the-rotation-transform">Our first transform: the rotation transform</h3>
+
+<p>Let&rsquo;s do this is 2D first so that things become more clear. When we&rsquo;re done, we can extend this to 3D.</p>
+
+<p>Suppose want to rotate a 2D point <strong>M</strong> around the world origin <strong>([0, 0])</strong>, a.k.a. <strong>O</strong>. How do we do it?</p>
+
+<p><img src="/images/bcgiaw/220px-Seno.png" alt="" /></p>
+
+<p>Notice that if you rotate the point a certain amount of degrees, let&rsquo;s call it, an angle &theta;, the <strong>x</strong> coordinate of the point will be moved to another, which we will call <strong>x&rsquo;</strong>. The <strong>y</strong> coordinate, likewise, will be moved to <strong>y&rsquo;</strong>.</p>
+
+<p>Where is <strong>x&rsquo;</strong> and <strong>y&rsquo;</strong>? We can find it by using polar coordinates. Given the distance to the origin <strong>R</strong>, let&rsquo;s state the following:</p>
+
+<p><img src="/images/bcgiaw/rotation-matrix-proof.gif" alt="" /></p>
+
+<p>Not that hard, is it? Notice that, being a sum of products, this can be generalized into a matrix-vector multiplication:</p>
+
+<p><img src="/images/bcgiaw/rotmatrix.gif" alt="" /></p>
+
+<p>And this:</p>
+
+<p><img src="/images/bcgiaw/rotmatrix1.gif" alt="" /></p>
+
+<p>is what we call a <strong>2D rotation matrix for &theta;</strong>.</p>
+
+<p>Now on to 3D. Since rotations are additive (that means, rotation by a &theta; angle and then by a &gamma; angle is the same as rotating by &theta;+&gamma;. I could prove this here as well, but I&rsquo;ll leave to you as an exercise. Remember the trigonometry theorems you were taught in middle school!), we just need to rotate our point around the X, Y and Z axis. The order doesn&rsquo;t matter (<strong>in this particular case</strong>). Regarding each one of the axis in the 3D space as the normal vector of a plane and calculating the rotation matrix for that plane like we did in 2D, this is what we get:</p>
+
+<p><img src="/images/bcgiaw/3drotmatrices.png" alt="" /></p>
+
+<p>Perfect. Now we just need to multiply them and voila: we get this beautiful beast that will rotate our point around the origin in a 3D space for any &theta; angle. Let&rsquo;s call it the <strong>R</strong> matrix.</p>
+
+<h3 id="scale-transform">Scale transform</h3>
+
+<p>Hopefully this transform will be easier to understand than the last one. All we need now is to multiply the points in our model&rsquo;s coordinates by 3 values; 3 real numbers which will tell how much farther from the world origin the points should move. This is usually used to make the model seem bigger or smaller. If you&rsquo;ve ever dealt with Unity3D, Blender or other 3D software, the Scale property is something that you&rsquo;ve known for a long time.</p>
+
+<p>Now, considering that our scale values are these indexed <strong>s</strong> numbers in the matrix, that will respectively multiply x, y, and z, deducing what our new scale matrix <strong>S</strong> will be is fairly easy:</p>
+
+<p><img src="/images/bcgiaw/scalematrix.gif" alt="" /></p>
+
+<p>I know, that wasn&rsquo;t a rigorous mathematical proof. It&rsquo;s not my intention to make one. But in the end, everything closes out:</p>
+
+<p><img src="/images/bcgiaw/scalematrix1.gif" alt="" /></p>
+
+<h3 id="translation-transform">Translation transform</h3>
+
+<p>Finally, we&rsquo;ll get to know our matrix <strong>T</strong>, which will be the last matrix to transform our model points to the world space. A translation matrix just adds values to the coordinates. That&rsquo;s what it does. Sounds easy, right? Given 3 real numbers, we&rsquo;ll add each one of them respectively to our points&rsquo; coordinates with a matrix multiplication. I bet you can find the right matrix for that. Give it a try.</p>
+
+<p>Did you try it out?</p>
+
+<p>Did you do it?</p>
+
+<p>Haha, I lied. You can&rsquo;t use a 3x3 matrix for that.</p>
+
+<p><img src="/images/bcgiaw/leaves-planet.gif" alt="" /></p>
+
+<p>The reason for that is: translation, as simple as it sounds, is a <strong>non-linear transformation</strong> in 3D.</p>
+
+<p>So, how do we do it? Luckily, you can do that linearly, not in 3D, but in <strong>4D</strong>.</p>
+
+<h3 id="wait-what-4d-points">Wait, what? 4D points??</h3>
+
+<p><img src="/images/bcgiaw/ddlc-natsuki-nazare.jpg" alt="" /></p>
+
+<p>Yes. We&rsquo;ll represent our points now not with the usual coordinates, but with <strong>homogeneous coordinates</strong>, that means, coordinates with a 4th dimension which will tell &ldquo;how far away from infinity we are&rdquo;. When a point is in its homogeneous form, this 4th dimension will be the denominator by which you divide to find the actual position of the point in the space.</p>
+
+<p>In math language: given a P = [x, y, z, w] homogeneous point, we can &ldquo;unhomogenize&rdquo; them by turning it into a P&rsquo; = [x/w, y/w, z/w, 1], and then we can discard the 4th dimension to obtain the actual 3D point.</p>
+
+<p>Notice that, the smaller w gets, the farther away from the world origin the point moves, or the closer to infinity it gets, hence our earlier definition of the 4th dimension.</p>
+
+<p>You might ask now, <strong>what if the w coordinate is zero?</strong>. That&rsquo;s a quintessential question, because we all know, you cannot divide by zero. In this case, guess what? <strong>It&rsquo;s not longer a point</strong>. You just sent your point down to infinity, and all that remains is a <strong>direction</strong>. <strong>Therefore, when the 4th coordinate is zero, we don&rsquo;t have a point, we have a vector</strong>. Yes, in homogeneous coordinates, a point and a vector are drastically different things, even if Euclidean geometry draws no mathematical distinction between them!</p>
+
+<p>Don&rsquo;t worry if you can&rsquo;t visualize all that we just talked about in your head. When you get deep into mathematics, it is no longer about visualizing stuff, and it&rsquo;s all about trusting the numbers. And that&rsquo;s why <strong>you should never be afraid of 4 dimensions mathematics</strong>. We&rsquo;ll get back to 4D in <strong>day seven</strong>, when we cover quaternions.</p>
+
+<p>Now that our point is 4D, we need to use 4x4 matrices to transform it. That isn&rsquo;t a problem: we can use all the matrices we had defined before, but with an extra column and an extra row with zeros, and a one in the corner. If we do that, it won&rsquo;t affect the point or vector&rsquo;s properties during the multiplication. For example, this is our new scale matrix <strong>S</strong>:</p>
+
+<p><img src="/images/bcgiaw/scalematrix44.gif" alt="" /></p>
+
+<p>And now we can finally obtain our translation matrix <strong>T</strong>:</p>
+
+<p><img src="/images/bcgiaw/translatematrix.gif" alt="" /></p>
+
+<p>Multiplying <strong>T x S x R</strong> (yes, <strong>the order matters now</strong>. It didn&rsquo;t matter when we built the <strong>R</strong> matrix because it&rsquo;s a particular property of the rotation matrices, but remember that <strong>matrix multiplication is not a commutative operation</strong>! If you do it in another order, the results will not be what you expect. You want to rotate the model, then scale it, and then translate it), we obtain a new matrix. We&rsquo;ll name it <strong>M</strong>, after <strong>model</strong>.</p>
+
+<h3 id="why-all-the-hassle-to-make-everything-a-series-of-matrix-multiplications">Why all the hassle to make everything a series of matrix multiplications?</h3>
+
+<p>That is a fair question to ask. What is it that&rsquo;s so special about matrices? Well, what we&rsquo;re doing here are all <strong>linear operations</strong>, and these can be stacked up and associated easily and, for that, we only need one data structure, a matrix which will be represented in code. This is hardware-friendly too: if you&rsquo;ve studied computer architecture, you know that <strong>not all instructions are created equal</strong>. A logical addition, or multiplication, or bitwise OR, etc., is some orders of magnitude faster than a division, which is way faster than a logarithm, which is way faster than a cache miss, which at this point, can be terrible and absolutely kill your performance. Remember, we want performance. <strong>If we have millions of points in a scene in a video game and we want that juicy 60+ FPS, we need to transform all of these points in at most <sup>1</sup>&frasl;<sub>60</sub> of a second. We have no time to waste.</strong> Doing things linearly will help our GPUs process the data in a massively parallel way, and will achieve better results.</p>
+
+<h3 id="normal-transforms">Normal transforms</h3>
+
+<p>We didn&rsquo;t talk about normals yet, I know. That is <strong>day three</strong> material, but this is worth noting. If you have no idea what is a normal vector, you can skip this section for now, and after the next day of the series everything will be more clear, I promise.</p>
+
+<p>Suppose a model, aside from points, has normal vectors on it, for whatever purpose (later we&rsquo;ll see that they&rsquo;re very important for <strong>illumination</strong>). So, we&rsquo;re transforming our model to world space, using our cute matrices, but what about the normals? They can&rsquo;t just be ignored. Can we just apply those matrices to the normals and they&rsquo;ll be transformed to their respective places?</p>
+
+<p>No, we can&rsquo;t. If you try it, you&rsquo;ll see that the result is no longer perpendicular to the transformed plane it was before. So instead of multiplying the normals by <strong>M</strong>, <strong>they should be multiplied by the inverse of the tranposed matrix M</strong>. Or the tranposed inverse. <a href="https://math.stackexchange.com/questions/340233/transpose-of-inverse-vs-inverse-of-transpose">They&rsquo;re the same thing.</a> Again, I could prove this, but I won&rsquo;t. <a href="https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/transforming-normals">Scratch-a-pixel already did it</a>, and of course, it is worth a read.</p>
+
+<p>We all know that transposing matrices is easy, but inverting matrices is a pain in the ass. That&rsquo;s why we usually don&rsquo;t do it, and use numerical methods, since analytical methods like the <strong>Gauss-Jordan elimination</strong> have high computational complexity for our purposes. Fortunately, inverting <strong>S, T and R</strong> is quite easy.</p>
+
+<p>The inverse of the scale matrix should be the matrix that does the inverse operation of what it does. So, given our scale matrix with the three s&rsquo;s, just replace them by 1/s. Same for the translation matrix, it needs to do the inverse operation to the point, so t1, t2, and t3 will be replaced by <strong>-t1, -t2 and -t3</strong>. What about the rotation matrix? It isn&rsquo;t that simple, is it? No, it&rsquo;s even simpler. Since it&rsquo;s an <a href="https://en.wikipedia.org/wiki/Orthogonal_matrix">orthogonal matrix</a>, inverting it is the same as transposing it.</p>
+
+<p>And with that information, transforming your model&rsquo;s normals shouldn&rsquo;t be a big problem on code.</p>
+
+<h3 id="ok-we-have-3d-coordinates-in-world-space-now-on-to-view-space">Ok, we have 3D coordinates in world space. Now on to view space</h3>
+
+<p>The view matrix is a bit more complicated. First, we need to define our camera. As I briefly commented in day one, a camera can be defined by using three vectors, <strong>at, up and eye</strong>. Is that enough to build our matrix? Yes, with some transformations, but first let&rsquo;s think about it. The reason why we need <strong>eye</strong> (the camera position) and <strong>at</strong> (the point that the camera is focusing) is pretty clear, but why do we need an <strong>up</strong> vector?</p>
+
+<p><img src="/images/bcgiaw/cameravectors.png" alt="" /></p>
+
+<p><em>Slide by Prof Emmanuel Agu</em></p>
+
+<p>Because just a focus point and a focused point is ambiguous. The camera may be twisted in a lot of different ways, and the computer wouldn&rsquo;t know which one is the intended by the programmer.</p>
+
+<p>Given our three camera vectors, we&rsquo;ll obtain now three <strong>orthogonal vectors</strong> which we&rsquo;ll call the three <strong>camera basis vectors, u, v and n</strong>. They will be used to build our view matix <strong>V</strong>. The intention is to define a new origin point centered at <strong>eye</strong>, and <strong>u</strong> will point left of the camera, <strong>v</strong> will point up and <strong>n</strong> will point back. We can find the three camera basis vectors according to the following operations:</p>
+
+<p><strong>n = eye - at / |eye - at|</strong> (we&rsquo;re dividing by the vector magnitude because it needs to be normalized)</p>
+
+<p><strong>u = up x n / |up x n|</strong> (we multiply the up vector by n to find a vector which is orthogonal to both of them, and then normalize it)</p>
+
+<p><strong>v = n x u</strong> (this one is easy. It&rsquo;s the final vector of an orthogonal basis, and since you&rsquo;re multiplying two unit vectors, this one is going to be normalized as well)</p>
+
+<p>Now we need to translate our model so that it&rsquo;s going to be taken to the camera eye space, and then rotate it to be adjusted to the three camera basis vectors. We&rsquo;ll do it by multiplying these two matrices, and when we do that operation, we&rsquo;ll obtain our <strong>V</strong> matrix:</p>
+
+<p><img src="/images/bcgiaw/viewmatrix.gif" alt="" /></p>
+
+<p>And when you multiply our model in the world space by this matrix, you have your model in view space.</p>
+
+<h3 id="projection-space-how-to-do-an-orthogonal-projection">Projection space: how to do an orthogonal projection</h3>
+
+<p>We&rsquo;re almost there. Now we just need to transform our model from the view space to the <strong>projection space</strong>, which is a 2D space. We&rsquo;re going to do this first by doing an orthogonal projection, which means, the points will be projected in <strong>each of their respective projections in the rendering plane</strong>. Orthogonal projections are not what we see in reality, but they&rsquo;re useful in CADs and 3D editors for example, and some game developers consider it to be prety stylish. And it&rsquo;s way simpler than doing a perspective projection. So, let&rsquo;s do it.</p>
+
+<p>We&rsquo;ll start with a simple projection matrix and we&rsquo;ll complicate it progressively. This is the simplest orthogonal projection matrix for 3D (taken from the <a href="https://en.wikipedia.org/wiki/Orthographic_projection">Wikipedia page</a>):</p>
+
+<p><img src="/images/bcgiaw/orthogonalmatrix0.png" alt="" /></p>
+
+<p>Can you see what it does? Multiplying it to a [x, y, z] vector, we get [x, y, 0]. We succesfully project it on a plane. But we&rsquo;re using homogeneous coordinates, remember? So this is how our matrix becomes:</p>
+
+<p><img src="/images/bcgiaw/orthogonalmatrix1.png" alt="" /></p>
+
+<p>Now it transforms a [x, y, z, w] vector to [x, y, 0, w]. Nothing unusual so far. But wait, we don&rsquo;t know what is the <strong>field of view</strong> of the camera, so we&rsquo;re just supposing it was a cube from [1, 1, 1] to [-1, -1, -1] for now. How can we control that parameter as well? We just need a 6-parameter tuple for the camera which is <strong>(top, bottom, left, right, near, far)</strong> to define our field of view.</p>
+
+<p>So, we also need to transform the models (again) from their view space to the field of view box. This is done by scaling them so they&rsquo;ll be bounded between [1, 1, 1] and [-1, -1, -1]., and transforming them as well. The matrix that does that is as follows:</p>
+
+<p><img src="/images/bcgiaw/orthogonalmatrix2.png" alt="" /></p>
+
+<p>After the multiplication, we get:</p>
+
+<p><img src="/images/bcgiaw/orthogonalmatrix3.png" alt="" /></p>
+
+<h3 id="orthogonal-projections-are-boring-let-s-make-a-perspective-projection">Orthogonal projections are boring. Let&rsquo;s make a perspective projection!</h3>
+
+<p><img src="/images/bcgiaw/1920px-Última_Cena_-_Da_Vinci_5.jpg" alt="" /></p>
+
+<p><em>Da Vinci was one of the renaissance artists who used perspective projection in their paintings</em></p>
+
+<p>Perspective projections means that the points will be projected in the rendering plane not in an orthogonal way, but in a slightly inclined way. That means that, the farther a point is from the focus point of the camera, the smaller it gets. Projective geometry is a wide topic in itself, as it is another kind of geometry. You can notice, for example, that parallel lines in projective geometry meet at infinity, in the painting above.</p>
+
+<p>&ldquo;Alright, parallel lines meet at infinity in perspective geometry, what does that change in our life?&rdquo;. Many things, such as the way that we&rsquo;ll calculate the points&rsquo; projections. This is how a point is projected in the plane according to its perspective:</p>
+
+<p><img src="/images/bcgiaw/perspective0.png" alt="" /></p>
+
+<p><em>Image taken from <a href="http://glasnost.itcarlow.ie/~powerk/GeneralGraphicsNotes/projection/perspective_projection.html">here</a></em></p>
+
+<p>The point <strong>p&rsquo;</strong> can be found by using triangle similarity:</p>
+
+<p><img src="/images/bcgiaw/perspectivepoint.gif" alt="" /></p>
+
+<p>To transform our point to that form, we have this matrix (remember the <strong>near</strong> parameter? It&rsquo;s the same as the <strong>d</strong>!)</p>
+
+<p><img src="/images/bcgiaw/perspectivematrix0.gif" alt="" /></p>
+
+<p>After we multiply, we just need to unhomogenize the points (remember the division by the 4th coordinate w? That&rsquo;s why it&rsquo;s usually called the <strong>perspective division</strong>). Now we add these two factors in order to simulate depth in the <strong>n</strong> axis (you can see that they will transform the depth of a point that is between <strong>near</strong> and <strong>far</strong> to something between -1 and 1):</p>
+
+<p><img src="/images/bcgiaw/perspectivematrix1.gif" alt="" /></p>
+
+<p>Let&rsquo;s keep this matrix for now. The next step is to transform our scene to the view box, which is no longer a box like in the orthographic projection, but a truncated pyramid, or a <strong>frustum</strong>. For that, we need another matrix which is defined as:</p>
+
+<p><img src="/images/bcgiaw/perspectivematrix2.gif" alt="" /></p>
+
+<p>By multiplying them, we finally find our perspective <strong>P</strong> matrix:</p>
+
+<p><img src="/images/bcgiaw/perspectivematrix3.gif" alt="" /></p>
+
+<h3 id="finally-the-mvp-matrix">Finally, the MVP matrix</h3>
+
+<p>At last, we get to the matrix we&rsquo;re going to send to the program shader when we&rsquo;re going to actually render some stuff, the MVP matrix. It&rsquo;s called that because it&rsquo;s the order at which the matrices will be applied to the model points in order for our transforms to be effective. The MVP matrix is defined as:</p>
+
+<p><strong>MVP = P x V x M</strong></p>
+
+<h3 id="that-was-quite-a-few-but-we-did-it">That was quite a few, but we did it</h3>
+
+<p>Today we found out why the hell we use 4D points in models, why everything is better as matrix multiplications and how do we make these matrix multiplications happen in a way that allows us to transform the points from a space to another correctly. But you might say to yourself, &ldquo;ok, we know what to do with our model&rsquo;s 3D points already, but we <strong>don&rsquo;t know how to represent these points mathematically</strong>&rdquo;. Yes, you could keep all the visible points as <strong>voxel data</strong> in the computer&rsquo;s memory, and this is actually done in some <a href="https://arxiv.org/pdf/1906.10515.pdf">very specific situations</a>, but that is very costly and will definitely be an issue when you have a big 3D game scene.</p>
+
+<p>Luckily, we have much better ways to keep those models in our memory. That&rsquo;s why we&rsquo;ll see in the next day, how to do <strong>3D modelling</strong>. Stay tuned.</p>
+
+<p><a href="/post/day_one_introduction_basic_computer_graphics_in_a_week/">Day one - introduction</a></p>
+</div>
+                    <br />
+                    <br />
+                    <div class="less">Page link: <a href="/post/day_two_transforms_basic_computer_graphics_in_a_week/" class="pagelink">/post/day_two_transforms_basic_computer_graphics_in_a_week/</a></div>
+                    <div class="line-dotted"></div>
+                <article>
+            </div>
+            <footer>
+    <div>
+    
+        &#xA9; 2019 by guangmean. All Rights Reserved.
+    
+    </div>
+</footer>
+
+        </div>
+        <div class="ads">
+    
+    
+</div>
+
+    </div>
+
+
+  <script src="/js/vendor/modernizr-3.6.0.min.js"></script>
+<script src="/js/vendor/jquery-3.3.1.min.js"></script>
+<script>window.jQuery || document.write('<script src="\/js/vendor/jquery-3.3.1.min.js"><\/script>')</script>
+<script src="/js/plugins.js"></script>
+<script src="/js/main.js"></script>  
+
+<script src="/js/vendor/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad();</script>
+                                                       
+
+<script>                                             
+    window.ga = function () { ga.q.push(arguments) }; ga.q = []; ga.l = +new Date;
+ga('create', 'UA-******', 'auto'); ga('send', 'pageview')
+</script>                                            
+<script src="//www.google-analytics.com/analytics.js" async defer></script>
+
+
+</body>
+</html>
