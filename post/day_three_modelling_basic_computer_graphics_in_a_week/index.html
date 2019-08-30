@@ -1,0 +1,410 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1">
+    <title>Day three: modelling (Basic Computer Graphics in a Week) - guilherme torres</title>
+
+    
+    <meta name="keywords" content="">
+    <meta name="description" content="Representing a 3D object in computer memory is not only a science, it&#39;s a craft. Today we learn how games, rendering engines, CADs, movies and scientists do it.">
+    <meta property="og:image", content=/images/bcgiaw/claybook-voxels.png>
+    
+    <link rel="stylesheet" href="/css/highlight.min.css">
+    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href="/css/diello.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-******",
+            enable_page_level_ads: true
+        });
+    </script>
+    
+    
+</head>
+
+
+<body>
+    <!--[if lte IE 9]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+    <![endif]-->
+
+  
+    <div class="flex-column">
+        <div class="ads">
+    
+    
+</div>
+
+        <div class="home">
+            <div class="logo">
+                <h1><a href="/">guilherme torres</a></h1>
+            </div>
+            <div class="navigation">
+    
+        
+        
+        
+        <a href="/" class="">home</a>
+        
+        <a href="/contact/" class="">yes, please bother me</a>
+        
+        <a href="/about/" class="">literally who??</a>
+        
+        <a href="/art/" class="">my arts and crafts</a>
+        
+        
+        <a href="javascript:void(0);" class="current">ARTICLE</a>
+        
+    
+</div>
+
+            <div>
+                <article>
+                    <h3>Day three: modelling (Basic Computer Graphics in a Week)</h3>
+                    <div class="less">
+                        <time>Published: Monday, Aug 26, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;18 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 3783 words
+                    </div>
+                    <div class="em">
+
+<h3 id="breathe-focus-let-s-go">Breathe. Focus. Let&rsquo;s go.</h3>
+
+<p><em>Credits to <a href="https://github.com/danielepanozzo/cg">https://github.com/danielepanozzo/cg</a> for some of the images used in the interpolation sections.</em></p>
+
+<p>I hope the maths didn&rsquo;t scare you away in the last post. If you stuck around after the last read, that&rsquo;s very good, because you just went past one of the fundamental topics of graphics. But now that you know what to do with the model points before rendering, now you should know what are exactly our models. We have many ways to do that, and by the end of this section, you&rsquo;ll know which one to choose, regardless if you&rsquo;re making video games, or movies, or science. The concepts here should be simpler to understand than the last post, but still, we have lots to talk about today, and it might leave you with more questions than answers in your mind.</p>
+
+<p>So, how to represent our graphical data in computer memory? Pick your poison.</p>
+
+<h3 id="voxel-data">Voxel data</h3>
+
+<p>Voxels are the 3D analogy to pixels in 2D (think of it as pixel + volume), in a three-dimensional grid. Just as we keep image data in terms of their pixels (of course, there are ways to do compression, in both cases), we can keep a 3D model in memory in terms of voxels. That is excellent for medical and scientific applications, because surfaces with lots of irregularities can be represented precisely.</p>
+
+<p>Remember that a voxel doesn&rsquo;t have a volume, it&rsquo;s considered a point with some properties, which can include things like opacity and color properties. When rendering, spaces that are in between points in the grid can be filled by interpolation of the voxels&rsquo; colors or properties.</p>
+
+<p>Despite being used mainly in science and medicine, voxels also have their place in video games, mainly to represent <strong>terrain</strong>, due to, again, their versatility to replicate lots of different patterns.</p>
+
+<p><img src="/images/bcgiaw/claybook-voxels.png" alt="" /></p>
+
+<p><em>The game Claybook uses raymarching algorithms to render voxels</em></p>
+
+<h3 id="polygon-meshes">Polygon meshes</h3>
+
+<p><img src="/images/bcgiaw/2b-butt-polygons.jpg" alt="" /></p>
+
+<p><em>Nier Automata&rsquo;s 2B with 300k polygons of robot booty that went viral. Probably a fake image, but it&rsquo;s funny to think of the possibility nonetheless.</em></p>
+
+<p>Polygon meshes are famous. Maybe the most famous type of 3D modelling that exists, and there is a reason for that. It&rsquo;s simple, fast to render, easy to edit and understand, widely used in 3D games, and it&rsquo;s able to produce complex shapes. That doesn&rsquo;t mean it&rsquo;s always enough for games in itself. Sometimes, we need some <strong>implicit modelling</strong>, as we&rsquo;ll see later on. But for the most part, <strong>if you&rsquo;re doing 3D games, you&rsquo;re dealing with polygon meshes</strong>.</p>
+
+<p>So, what is it about? Each surface being represented is considered a polyhedron, which is subdivided between lots of polygons. So, for now, we need to keep track of two things: the vertices and the faces. Given a model with <strong>v</strong> vertices and <strong>n</strong> faces, vertices are represented by <strong>v</strong> 3D vectors with the coordinates of those points in the 3D model space, and the faces will be <strong>n</strong> vectors with 3 or more integers each. Those will index the vertex list, and thus will define triangles or the so-called n-gons between the vertices.</p>
+
+<p>One more type of data that&rsquo;s usually kept in memory is the <strong>normal vector</strong> for each vertex, that is, the unit vector which is orthogonal to the tangent plane to the vertex. So, we also have <strong>v</strong> unit vectors for the normals. And at last, texture coordinates will tell the computer which point of the model&rsquo;s texture will be projected onto each one of the vertex. We&rsquo;ll see more about textures later on, but for now, remember that there will be also <strong>v</strong> 2D vectors for the texture coordinates.</p>
+
+<p>As we already know, polygon meshes are very popular, so there are a lot of export formats for those. One of them, simple, easy to import and used for static objects is the <a href="https://en.wikipedia.org/wiki/Wavefront_.obj_file">Wavefront OBJ format</a>. For animated objects, more sophisticated export formats are available, like the <a href="https://en.wikipedia.org/wiki/FBX">Autodesk FBX</a>, <a href="https://www.khronos.org/collada/">Collada</a> and the new format speficied by the Khronos Group, <a href="https://www.khronos.org/gltf/">glTF</a>.</p>
+
+<p>Though they are easy to edit and arguably less costly on memory than voxel data, polygon meshes also have their cons. Some of them are:</p>
+
+<ul>
+<li>They aren&rsquo;t as versatile as voxel data to represent complex shapes, or terrain.</li>
+<li>The faces are flat (there are ways to make them seem &ldquo;less flat&rdquo; though. We&rsquo;ll talk about them in the next day, when we cover <strong>shading</strong>)</li>
+<li>Even though they&rsquo;re &ldquo;easy to edit&rdquo;, if you ever made some 3D art, you&rsquo;d know that things aren&rsquo;t always that easy. 3D art is a craft in itself and requires good modellers, sculptors, painters and animators and also good editing tools, like Blender.</li>
+</ul>
+
+<h3 id="textures">Textures</h3>
+
+<p>I was going to talk about textures later in the post, but since they&rsquo;re so intrinsically linked to polygon meshes and are one of the most practical ways to achieve plausible model albedoes, why not cover them right now?</p>
+
+<p>Textures are data in images, that are associated with a model. The most common type of texture is an albedo texture, which contains color data. It&rsquo;s as if we wrap the image around the model, like a world map around a globe.</p>
+
+<p>Albedo textures are a way to change the color in between points and add more detail to a model, as we can see in this example:</p>
+
+<p><img src="/images/bcgiaw/facetexture.jpg" alt="" /></p>
+
+<p><em>Texture of a human face. This will be &ldquo;wrapped&rdquo; around a person&rsquo;s model, probably a polygon mesh, to generate a realistic human albedo. Credits to <a href="https://www.youtube.com/watch?v=SVqWvlNNHo4">this video</a></em></p>
+
+<p>Now you can imagine what are texture coordinates for: to tell the computer that a certain vertex is associated with a certain point in the texture image. Remember: <strong>not all textures are albedo textures</strong>. They can carry many types of data, like specular data, or they can be normal maps, which we&rsquo;ll address later on.</p>
+
+<p>So, for each point in the model you know what point in the texutre is associated to it. But what about what&rsquo;s in between?</p>
+
+<h3 id="texture-mapping-interpolating-between-texture-coordinates">Texture mapping: interpolating between texture coordinates</h3>
+
+<p>You must have heard of the word &ldquo;interpolation&rdquo;, which means a way to construct continuous data from a discrete set of points. This is exactly what we&rsquo;re about to do to fill in what is between the points in the texture.</p>
+
+<p>Let&rsquo;s call the two coordinates from a texture <strong>u, v</strong>, as it&rsquo;s usual. Given an arbitrary triangle in the mesh, we have <strong>[u0, v0], [u1, v1] and [u2, v2]</strong>, associated with each one of the three triangle vertices. We can find <strong>u and v</strong> in a <strong>P</strong> by getting their values as:</p>
+
+<p><img src="/images/bcgiaw/affinetex.png" alt="" /></p>
+
+<p>This is the simplest way to do it, an <strong>affine mapping</strong>. The texture coordinates are interpolated linearly. This is how everyone did it until the 2000s by the way, and it would be great if it didn&rsquo;t show this little issue here:</p>
+
+<p><img src="/images/bcgiaw/texturelinearinterpolation.jpg" alt="" /></p>
+
+<p><em>Image from <a href="https://www.geeks3d.com/20130514/opengl-interpolation-qualifiers-glsl-tutorial/">here</a></em></p>
+
+<p>See how the lines break in the triangle boundaries? This is because <strong>u and v are not linear in screen space</strong>, because of the <strong>perspective projection</strong>. But since computer scientists never give up, a new way was found to interpolate the texture coordinates and map the texture. Given a new <strong>z</strong> parameter, which is the <strong>depth</strong> coordinate, you&rsquo;ll find out that <strong>[z, u, v]</strong> is not linear in screen space, but <strong>[1/z, u/z, v/z] is</strong> (<a href="http://www.lysator.liu.se/~mikaelk/doc/perspectivetexture/">mathematical proof</a>).</p>
+
+<p>So you won&rsquo;t just compute u and v, but correct them. And this is how it&rsquo;s done:</p>
+
+<p><strong>u = u/z * z</strong></p>
+
+<p><strong>v = v/z * z</strong></p>
+
+<p>And then you copy the matching texture point to the screen. This is called <strong>hyperbolic or perspective texture mapping</strong>.</p>
+
+<p><img src="/images/bcgiaw/Doom_ingame_1.png" alt="" /></p>
+
+<p><em>Doom renders vertical and horizontal spans with affine texture mapping, and is therefore unable to draw ramped floors or slanted walls. - from the Wikipedia</em></p>
+
+<p><img src="/images/bcgiaw/persona3ingame.png" alt="" /></p>
+
+<p><em>The PlayStation 2 already supported hardware accelerated hyperbolic texture mapping. Image from the game Shin Megami Tensei: Persona 3</em></p>
+
+<h3 id="bump-and-normal-mapping">Bump and normal mapping</h3>
+
+<p>Bump mapping is a great technique to add more details to a lighted model. This is done by using another texture, not an albedo texture this time around, to calculate an offset to the normals of the model per fragment. Normals are used for lighting, and so they can change the lighting very easily. We&rsquo;re still going to see how exactly normals control lighting in <strong>day four</strong>, but for now, imagine the following situation: you have a surface segment with a normal that points straight to a light source, and another segment with a normal that points in the opposite direction. It&rsquo;s intuitive that the first segment will be illuminated with more intensity than the latter, don&rsquo;t you think? This is what bump and normal maps want to control.</p>
+
+<p>Bump maps are images where each pixel can be, for example, an offset to the surface height. Given the &ldquo;new height&rdquo;, a normal to that point is calculated and it is interpolated with the normal from the model itself (given a model with per vertex normals, we can find a per fragment normal by, again, interpolating the normals linearly). This new normal, generated by the last interpolation, is what we&rsquo;re going to use for lighting.</p>
+
+<p>You can see right away what the problem with this is. There are way too many operations, interpolations, and sometimes all we want is something we can do in real time. That&rsquo;s where the bump mapping variations come in, particularly <strong>normal mapping</strong>.</p>
+
+<p>Normal maps are widely used in video games. They are textures that have the data of what the normal in a point should be. Pretty straightforward, isn&rsquo;t it? Well, not exactly. The normals are always represented given that the <strong>z</strong> world axis is orthogonal to the texture matrix. So what do we do when the model is transformed from a location to another? We need to <strong>transform</strong> them.</p>
+
+<p><em>And you thought you&rsquo;d get rid of transforms after day two? Hah.</em></p>
+
+<p>Transform by what? If we have a basis for the polygon, we can use it as a rotation matrix and we can succesfully transform our normals from the normal map. The matrix we want to find is a <strong>TBN matrix</strong> (tangent-bitangent-normal). If we have the normal and the tangent vector, finding the bitangent is easy: you just do a cross product between the normal and the tangent.</p>
+
+<p>Details on how to use the TBN matrix on practice in a vertex shader can be found at, and credits for the images goes to <a href="https://learnopengl.com/Advanced-Lighting/Normal-Mapping">LearnOpenGL</a>.</p>
+
+<p><img src="/images/bcgiaw/normalmapping.png" alt="" /></p>
+
+<p><img src="/images/bcgiaw/normal_mapping_compare.png" alt="" /></p>
+
+<h3 id="point-clouds">Point clouds</h3>
+
+<p><img src="/images/bcgiaw/pointcloudrabbit.png" alt="" /></p>
+
+<p><em>A rabbit modelled in a point cloud software editor, by <a href="http://paradise.caltech.edu/~yli/software/pceditor.html">a Caltech team</a></em></p>
+
+<p>Point clouds are just what the name says, a &ldquo;cloud&rdquo; made of points. Not to be confused with voxel data, since the grid no longer exists, but these points have their position in a &ldquo;continuous space&rdquo;.</p>
+
+<p>You might be wondering, how do we fill in these spaces in between the points? Before being rendered, points clouds are usually transformed into triangle meshes, with a computational geometry technique called <strong>the Delaunay triangulation</strong>. Or else, they can be transformed into <strong>NURBS</strong> surfaces, which we&rsquo;ll talk about later on.</p>
+
+<p>Point clouds are widely used in movie animations, to edit especially characters. It&rsquo;s a branch where artists are constantly requested and expensive, so, if you plan to work as a graphical artist on that field, you&rsquo;re in luck. On the other hand, programmers are pretty much the lower tier labour there.</p>
+
+<h3 id="a-type-of-parametrized-curve-polynomial-interpolations">A type of parametrized curve: polynomial interpolations</h3>
+
+<p>Now we&rsquo;re going to exercise your polynomial functions knowledge a little. Naturally, in every 3D model, we have a discrete set of points, because computers are discrete by nature. And we surely want to fill the void between them, otherwise, what is the point? (get it? <em>ba dum tss!</em>)</p>
+
+<p>The most trivial way to interpolate between two points (and we&rsquo;ll use a 2D space for now, because it&rsquo;s easier to explain) is by doing a <strong>linear interpolation</strong>.</p>
+
+<p><img src="/images/bcgiaw/linearinterp.png" alt="" /></p>
+
+<p><em>This is a linear interpolation. Image from Wikipedia</em></p>
+
+<p>Suppose we have a <strong>f(x&rsquo;)</strong> image for an <strong>x&rsquo;</strong> parameter in this curve. Given that <strong>[i, f(i)]</strong> and <strong>[j, f(j)]</strong> are two defined points in this curve, and <strong>i &lt;= x&rsquo; &lt;= j</strong>, we can interpolate between our two points to find a value for <strong>f(x&rsquo;)</strong>:</p>
+
+<p><img src="/images/bcgiaw/linearinterpolation.gif" alt="" /></p>
+
+<p>What is the problem with linear interpolation? The problem is that everything is flat and it looks like crap. We can solve this problem though, by using higher degree polynomials. In order to use a <strong>quadratic</strong> polynomial, though, which is the next step towards making a smoother curve, we need to use 3 points instead, because there can be infinite polynomials of degree two passing through two points.</p>
+
+<p>This is what it would look like:</p>
+
+<p><img src="/images/bcgiaw/P3Interpolation.jpg" alt="" /></p>
+
+<p><em>Image taken from <a href="http://www.ebyte.it/library/codesnippets/P3Interpolation.html">here</a></em></p>
+
+<p>Not bad, huh? So, as you must be suspecting, yes, we can interpolate between n points with a polynomial of n-1 degree. All we need to do is to solve the following linear system with the <strong>Vandermonde matrix</strong>:</p>
+
+<p><img src="/images/bcgiaw/vandermondematrix.png" alt="" /></p>
+
+<p>We don&rsquo;t even need to do a Gaussian elimination here, as there are numerical methods that can find an approximate polynomial in <strong>O(n²)</strong> complexity.</p>
+
+<p>So, we just need to use a (n-1)-degree polynomial to interpolate and all our problems are solved.</p>
+
+<p><a href="https://people.sc.fsu.edu/~jburkardt/py_src/chebyshev_interp_1d/p08_poly.png">Right?</a></p>
+
+<p>No&hellip; that doesn&rsquo;t seem OK. Notice how the polynomial just explodes when we&rsquo;re past the edges. Well, looks like polynomials weren&rsquo;t the answer we were looking for. But they&rsquo;ll be the foundations to learn what&rsquo;s yet to come.</p>
+
+<h3 id="splines">Splines</h3>
+
+<p>Splines are curves defined by two or more <strong>control points</strong>. They&rsquo;re calculated using polynomials, and they&rsquo;re different between each pair of edges. Here&rsquo;s a simple example of a set of splines, which are linear and defined each by two points:</p>
+
+<p><img src="/images/bcgiaw/linearspline.png" alt="" /></p>
+
+<p>&ldquo;But this is linear interpolation again!&rdquo; Yes, but it will allow us to understand higher degree splines later on, so bear with me. For each spline, you have a definition which is, given two p = [x, y]:</p>
+
+<p><img src="/images/bcgiaw/splinevector.gif" alt="" /></p>
+
+<p>Since we love matrices, we can put this in matrix form too:</p>
+
+<p><img src="/images/bcgiaw/splinematrix.gif" alt="" /></p>
+
+<p>You can do it with higher degree polynomials too. All you need is to represent the polynomials in vector form, like we just did in the matrix above. You can do as you please with polynomials: you can add them, multiply them, transform them&hellip; <strong>anything you can do with vectors, you can do with polynomials too</strong>.</p>
+
+<p>We work with vector spaces using bases. In case you don&rsquo;t remember, a basis is a set of vectors which:</p>
+
+<ul>
+<li><p>Are linearly independent;</p></li>
+
+<li><p>Any vector in the vector space defined by the basis can be obtained by a linear combination between them.</p></li>
+</ul>
+
+<h3 id="wait-a-minute-vector-what">Wait a minute&hellip; vector what?</h3>
+
+<p>Vector spaces. A set of vectors is called a vector space if:</p>
+
+<ul>
+<li><p>The set contains the zero vector.</p></li>
+
+<li><p>For every vector <strong>v</strong> in the set, the set also contains &alpha;<strong>v</strong> given that &alpha; is a real number.</p></li>
+
+<li><p>For every pair of vectors <strong>u</strong> and <strong>v</strong> in the set, it also contains <strong>u + v</strong>.</p></li>
+</ul>
+
+<p>Why is this important? Because the solution of a homogenuous linear system is a vector space. And the coefficients of the polynomials of the spline basis is a solution of a homogeneous linear system. You need a basis to define a spline because there may be infinite n+ degree splines defined by n control points, as you can see here:</p>
+
+<p><img src="/images/bcgiaw/polynomialinterpolation.png" alt="" /></p>
+
+<p>Each one of those splines are <strong>subspaces</strong> of the space defined by the basis of each one respectively. Okay, so how do we change the basis? Easy:</p>
+
+<p><img src="/images/bcgiaw/changeofsplinebasis.png" alt="" /></p>
+
+<p>Yes, just a rotation. Imagine as if you&rsquo;re changing the basis for R³ ([i, j, k]) to the camera basis ([u, v, n]), which we talked about in the last post.</p>
+
+<p><img src="/images/bcgiaw/monomialbasis.png" alt="" /></p>
+
+<p><em>This L vector is the interpolation basis we&rsquo;re using, for a T=[0, 1, 2, 3] point</em></p>
+
+<p>We now have two problems: how do we choose the right basis and <strong>how do we achieve smoothness</strong>? Because <strong>this</strong> isn&rsquo;t pretty:</p>
+
+<p><img src="/images/bcgiaw/lagrangesplines.png" alt="" /></p>
+
+<p>Fortunately, the answer to both these questions is the same:</p>
+
+<h3 id="how-to-achieve-smoothness-hermite-basis">How to achieve smoothness: Hermite basis</h3>
+
+<p>First of all, <strong>what is smoothness</strong>? You know what it is, in an abstract sense, but we need to put it into mathematical language if we want our computers to understand it. In order to do that, we&rsquo;ll use calculus: we want to know if the curves are differentiable at the nodes:</p>
+
+<ul>
+<li><p><strong>C0</strong> continuity means that the curves meet at the nodes. They can form an edge, for example. That means that, in the point where the node is (the control point), the curve is not differentiable though.</p></li>
+
+<li><p><strong>C1</strong> continuity means that the curve is differentible at the node point, but <strong>not twice</strong>, or, in other words, if you plot the derivative graph you&rsquo;ll find that it has an edge in that point and it is <strong>C0</strong>.</p></li>
+
+<li><p><strong>Cn</strong> means that it&rsquo;s differentiable <strong>n</strong> times. This one is self-explainatory.</p></li>
+</ul>
+
+<p>We want at least C1 continuity so that the curves look smooth and good. For that to happen, we need to make sure the derivatives coming from both sides of a node are the same. So we&rsquo;ll not only have two control points per spline, but four:</p>
+
+<p><img src="/images/bcgiaw/cubichermite.png" alt="" /></p>
+
+<p>The <strong>H(t)</strong> polynomial which is the basis for this interpolation is called a Hermite basis. They&rsquo;re the first step towards effectively doing a well-known type of interpolation, the Bézier curves.</p>
+
+<h3 id="bézier-curves">Bézier curves</h3>
+
+<p>Bézier curves were designed by Pierre Bézier to model cars at Renault. They have many common applications like in CAD software and graphics design programs, especially for vector art. Bézier curves are different from Hermite basis curves in a way, because you don&rsquo;t define a derivative control point anymore: you define a third control point between the two you&rsquo;re interpolating with so you can approximate to it&rsquo;s value. Think of it as a kind of magnetic handle: the more you pull it up, the more the curve will be inclined towards it, but it doesn&rsquo;t really reach it.</p>
+
+<p>Given three points, being p0 and p2 the edge nodes and p1 the handle, you can find the value of a point in a Bézier curve just like this:</p>
+
+<p><img src="/images/bcgiaw/beziercurveformula.gif" alt="" /></p>
+
+<p>There are also <a href="https://cubic-bezier.com">cubic Bézier curves</a> which you can try out in this online editor. They have two handles instead of one, and simulate a cubic polynomial. These are the ones used in Inkscape for example.</p>
+
+<h3 id="but-these-are-all-2d-examples-do-parametrized-curves-help-in-3d-modelling-too">But these are all 2D examples! Do parametrized curves help in 3D modelling too?</h3>
+
+<p><img src="/images/bcgiaw/NURBS_3-D_surface.gif" alt="" /></p>
+
+<p><em>NURBS surface rotating in a 3D editor. Image from Wikipedia</em></p>
+
+<p>They do! All of the math we just did also applies to 3D. You can just replace the 2D points with 3D. And this is actually very useful: <strong>Non-uniform rational B-splines</strong> are one of the most used model types in architecture and engineering. If you&rsquo;re interested in the mathematics behind NURBS, <a href="http://www.pilot3d.com/NurbSecrets.htm">this is a useful read</a> for you.</p>
+
+<h3 id="implicit-modelling-what-is-it">Implicit modelling: what is it?</h3>
+
+<p>Implicit modelling is when not all of the points and edges in our model are represented in memory beforehand, and they&rsquo;re built from an algorithm. This is especially useful when we can&rsquo;t afford to waste memory on large terrains or when we want to make them easily editable, like in terrain editors in game engines or in geology. Implicit modelling can help us to build complex polygon-like surfaces with fewer polygons at our disposal.</p>
+
+<h3 id="the-simple-way-marching-cubes">The simple way: marching cubes</h3>
+
+<p>Credits to <a href="https://www.boristhebrave.com">Boris the brave</a> for the marching cubes images.</p>
+
+<p><img src="/images/bcgiaw/marchingcubesgrid.png" alt="" /></p>
+
+<p>For the marching cubes algorithm, we divide the space in a regular grid. Then we&rsquo;ll have a solid function to approximate. That function can be, for example, a circle, which is a simple example. Then we will approximate the shape of the circle given our grid, according to the disposal of vertices that are inside the circle:</p>
+
+<p><img src="/images/bcgiaw/marchingcombinations.png" alt="" /></p>
+
+<p>The resulting shape will be something approximate to a circle, but not quite it. We have two options to make it better. The first one is to lower the size of our grid, and use more vertices in memory. The second one is to the <strong>an adaptative version of marching cubes</strong>, where we basically use an approximate function to tweak the distance from the boundary vertex to the boundary a little. To read more about adaptative marching cubes, there are few better sources than <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.2.4191&amp;rep=rep1&amp;type=pdf">the original paper</a>.</p>
+
+<p><img src="/images/bcgiaw/marchingcubesresult.png" alt="" /> <img src="/images/bcgiaw/adaptativemarchingcubesresult.png" alt="" /></p>
+
+<p><em>Regular marching cubes result vs. adaptative marching cubes for a circle approximation</em></p>
+
+<p>What about 3D? In this case, it&rsquo;s going to be a three-dimensional grid, and there will be a far larger number of combination to build the edges. Of course, you&rsquo;ll not only have 16 edge types to keep track of, but you&rsquo;ll have 256 instead. That isn&rsquo;t a problem, since most cases are just rotations or inverses of another one. By excluding them and keeping track of just one, we have 15 cases to keep in memory beforehand:</p>
+
+<p><img src="/images/bcgiaw/MarchingCubes.svg.png" alt="" /></p>
+
+<h3 id="further-reading">Further reading</h3>
+
+<p>As we just saw, modelling can be done in various different ways and each one has its pros and cons. What you&rsquo;re going to use, it depends on what you&rsquo;re working on. Means to represent objects in computer memory have applications not only in computer graphics, but in arts, architecture, computer vision, simulation software for physics&hellip; you name it. And that was a very rough overview of the topic; I don&rsquo;t expect anyone to become a modelling expert in one day. But if you want to know more about modelling applications, these are topics I&rsquo;m not going to touch today, but are still important:</p>
+
+<ul>
+<li><p><strong>3D reconstruction</strong> in computer vision is type of <strong>inverse rendering</strong>. Given an image, you want to find out its scene geometry. Methods to do this are usually specific either for animate or innanimate objects, and convolutional neural networks are built with the intention of specializing in one type. One of the most cutting-edge researchers on this topic nowdays is <a href="https://people.eecs.berkeley.edu/~kanazawa/">Angjoo Kanazawa from UC Berkeley</a>. Her contributions have been wide in the inverse rendering branches in the last years.</p></li>
+
+<li><p><strong>More implicit modelling</strong>. Because we refuse to settle with such a basic implicit modelling algorithm such as marching cubes, better ones are being studied and created for decades already. Notable mentions are <a href="https://www.cse.wustl.edu/~taoju/research/dualContour.pdf">dual contouring</a> from Tao Ju and Frank Losasso and the <a href="https://www.cs.rice.edu/~jwarren/papers/dmc.pdf">dual marching cubes algorithm</a> from Scott Schaefer and Jon Warren.</p></li>
+
+<li><p><strong>Fluid animation</strong> also depends on a different type of modelling than what we&rsquo;ve mentioned before. <a href="https://link.springer.com/content/pdf/10.1007/s41095-015-0020-6.pdf">These guys</a>, for example, released a novel bubble modelling technique some years ago.</p></li>
+
+<li><p><strong>People are building neural networks to generate 3D models and training AI to be creative</strong>. <a href="https://arxiv.org/abs/1908.07587">This is a recent example</a>. Makes us wonder <a href="https://arxiv.org/abs/1801.04486">how good can computers get at art</a>?</p></li>
+
+<li><p><strong>Differential geometry</strong>. Not very applicable to computer graphics since we usually want a very specific shape to be represented mathematically, but it&rsquo;s a good knowledge to have nonetheless. <a href="https://www.youtube.com/playlist?list=PLLq_gUfXAnkl5JArcktbOrIUeR5rra-Gz">There are free online classes</a> if you want to know more about it.</p></li>
+</ul>
+
+<p>When I&rsquo;m going to post the next day, only I know that. But, if you&rsquo;re in a hurry, better start checking out for <strong>local illumination and materials</strong>.</p>
+
+<p><a href="/post/day_one_introduction_basic_computer_graphics_in_a_week/">Day one - introduction</a></p>
+
+<p><a href="/post/day_two_transforms_basic_computer_graphics_in_a_week/">Day two - transforms</a></p>
+</div>
+                    <br />
+                    <br />
+                    <div class="less">Page link: <a href="/post/day_three_modelling_basic_computer_graphics_in_a_week/" class="pagelink">/post/day_three_modelling_basic_computer_graphics_in_a_week/</a></div>
+                    <div class="line-dotted"></div>
+                <article>
+            </div>
+            <footer>
+    <div>
+    
+        &#xA9; 2019 by guangmean. All Rights Reserved.
+    
+    </div>
+</footer>
+
+        </div>
+        <div class="ads">
+    
+    
+</div>
+
+    </div>
+
+
+  <script src="/js/vendor/modernizr-3.6.0.min.js"></script>
+<script src="/js/vendor/jquery-3.3.1.min.js"></script>
+<script>window.jQuery || document.write('<script src="\/js/vendor/jquery-3.3.1.min.js"><\/script>')</script>
+<script src="/js/plugins.js"></script>
+<script src="/js/main.js"></script>  
+
+<script src="/js/vendor/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad();</script>
+                                                       
+
+<script>                                             
+    window.ga = function () { ga.q.push(arguments) }; ga.q = []; ga.l = +new Date;
+ga('create', 'UA-******', 'auto'); ga('send', 'pageview')
+</script>                                            
+<script src="//www.google-analytics.com/analytics.js" async defer></script>
+
+
+</body>
+</html>

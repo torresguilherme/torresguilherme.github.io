@@ -9,7 +9,7 @@
 
     
     <meta name="keywords" content="">
-    <meta name="description" content="Our topic for day two of this series is how to transform points. Transforming means moving the points from one space to another, and this is essential for all graphics applications.">
+    <meta name="description" content="Our topic for day two of this series is how to transform points. Transforming means moving the points from one space to another, and that is essential for all graphics applications.">
     <meta property="og:image", content=/images/bcgiaw/ddlc-natsuki-nazare.jpg>
     
     <link rel="stylesheet" href="/css/highlight.min.css">
@@ -68,7 +68,7 @@
                 <article>
                     <h3>Day two: transforms (Basic Computer Graphics in a Week)</h3>
                     <div class="less">
-                        <time>Published: Monday, Aug 26, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;16 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 3235 words
+                        <time>Published: Monday, Aug 26, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;16 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 3238 words
                     </div>
                     <div class="em">
 
@@ -176,7 +176,7 @@
 
 <p>And now we can finally obtain our translation matrix <strong>T</strong>:</p>
 
-<p><img src="/images/bcgiaw/translatematrix.gif" alt="" /></p>
+<p><img src="/images/bcgiaw/translatematrix.png" alt="" /></p>
 
 <p>Multiplying <strong>T x S x R</strong> (yes, <strong>the order matters now</strong>. It didn&rsquo;t matter when we built the <strong>R</strong> matrix because it&rsquo;s a particular property of the rotation matrices, but remember that <strong>matrix multiplication is not a commutative operation</strong>! If you do it in another order, the results will not be what you expect. You want to rotate the model, then scale it, and then translate it), we obtain a new matrix. We&rsquo;ll name it <strong>M</strong>, after <strong>model</strong>.</p>
 
@@ -218,13 +218,13 @@
 
 <p>Now we need to translate our model so that it&rsquo;s going to be taken to the camera eye space, and then rotate it to be adjusted to the three camera basis vectors. We&rsquo;ll do it by multiplying these two matrices, and when we do that operation, we&rsquo;ll obtain our <strong>V</strong> matrix:</p>
 
-<p><img src="/images/bcgiaw/viewmatrix.gif" alt="" /></p>
+<p><img src="/images/bcgiaw/viewmatrix.png" alt="" /></p>
 
 <p>And when you multiply our model in the world space by this matrix, you have your model in view space.</p>
 
 <h3 id="projection-space-how-to-do-an-orthogonal-projection">Projection space: how to do an orthogonal projection</h3>
 
-<p>We&rsquo;re almost there. Now we just need to transform our model from the view space to the <strong>projection space</strong>, which is a 2D space. We&rsquo;re going to do this first by doing an orthogonal projection, which means, the points will be projected in <strong>each of their respective projections in the rendering plane</strong>. Orthogonal projections are not what we see in reality, but they&rsquo;re useful in CADs and 3D editors for example, and some game developers consider it to be prety stylish. And it&rsquo;s way simpler than doing a perspective projection. So, let&rsquo;s do it.</p>
+<p>We&rsquo;re almost there. Now we just need to transform our model from the view space to the <strong>projection space</strong>, which is a 2D space. We&rsquo;re going to do this first by doing an orthogonal projection, which means, the points will be projected in <strong>each of their respective projections in the rendering plane</strong>. Orthogonal projections are not what we see in reality, but they&rsquo;re useful in CADs and 3D editors for example, and some game developers consider it to be pretty. And it&rsquo;s way simpler than doing a perspective projection. So, let&rsquo;s do it.</p>
 
 <p>We&rsquo;ll start with a simple projection matrix and we&rsquo;ll complicate it progressively. This is the simplest orthogonal projection matrix for 3D (taken from the <a href="https://en.wikipedia.org/wiki/Orthographic_projection">Wikipedia page</a>):</p>
 
@@ -291,6 +291,8 @@
 <p>Luckily, we have much better ways to keep those models in our memory. That&rsquo;s why we&rsquo;ll see in the next day, how to do <strong>3D modelling</strong>. Stay tuned.</p>
 
 <p><a href="/post/day_one_introduction_basic_computer_graphics_in_a_week/">Day one - introduction</a></p>
+
+<p><a href="/post/day_three_modelling_basic_computer_graphics_in_a_week/">Day three - modelling</a></p>
 </div>
                     <br />
                     <br />
