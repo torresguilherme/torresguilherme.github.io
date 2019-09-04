@@ -1,0 +1,371 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1">
+    <title>Day four: local illumination and materials (Basic Computer Graphics in a Week) - guilherme torres</title>
+
+    
+    <meta name="keywords" content="">
+    <meta name="description" content="This is the hardest, most complex post of this series. Bonus points if you understand everything. Light is a fundamental part of graphics, and today we learn how to emit it and how to react to it.">
+    <meta property="og:image", content=/images/bcgiaw/minust.jpg>
+    
+    <link rel="stylesheet" href="/css/highlight.min.css">
+    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href="/css/diello.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-******",
+            enable_page_level_ads: true
+        });
+    </script>
+    
+    
+</head>
+
+
+<body>
+    <!--[if lte IE 9]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+    <![endif]-->
+
+  
+    <div class="flex-column">
+        <div class="ads">
+    
+    
+</div>
+
+        <div class="home">
+            <div class="logo">
+                <h1><a href="/">guilherme torres</a></h1>
+            </div>
+            <div class="navigation">
+    
+        
+        
+        
+        <a href="/" class="">home</a>
+        
+        <a href="/contact/" class="">yes, please bother me</a>
+        
+        <a href="/about/" class="">literally who??</a>
+        
+        <a href="/art/" class="">my arts and crafts</a>
+        
+        
+        <a href="javascript:void(0);" class="current">ARTICLE</a>
+        
+    
+</div>
+
+            <div>
+                <article>
+                    <h3>Day four: local illumination and materials (Basic Computer Graphics in a Week)</h3>
+                    <div class="less">
+                        <time>Published: Friday, Aug 30, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;17 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 3618 words
+                    </div>
+                    <div class="em">
+
+<h3 id="this-is-the-hardest-most-complex-post-of-this-series-bonus-points-if-you-understand-everything">This is the hardest, most complex post of this series. Bonus points if you understand everything.</h3>
+
+<p>Light is a fundamental part of graphics, and today we learn how to emit it and how to react to it. And there are many, many (did I say many? there are many, just in case I didn&rsquo;t make myself clear) ways of programming illumination in graphics. Some are better than others overall, some are more costly, some are just well-suited for real-time rendering like video games.
+Out of this large pool of attempts to emulate how light works and how it interacts with our models, and such interaction is dictated by materials, <strong>Phong&rsquo;s lighting model</strong> is a good introductory method for this post, due to its simplicity and its success in real-time rendering.</p>
+
+<p>But before we&rsquo;re able to understand the insides of it, we&rsquo;ll jump once again into the realm of calculus. Credits for the radiosity images and classes goes to my advisor Prof. Erickson Nascimento.</p>
+
+<h3 id="radiometry">Radiometry</h3>
+
+<p>Radiometry is actually a branch of physics, which describes a series of techniques to measure eletromagnetic radiation. Visible light, for instance, is a type of eletromagnetic radiation.</p>
+
+<p>We make a lot of assumptions when working with ray optics, which don&rsquo;t really apply in reality. That&rsquo;s for the most part, of course, as you can build a graphics application with a completely physical approach, but for now we assume that:</p>
+
+<ul>
+<li><p>Light has infinite speed, so it takes effect on our models instantly</p></li>
+
+<li><p>Light travels in a straight ray. That means it&rsquo;s not affected by diffraction.</p></li>
+
+<li><p>Light is not influenced by gravity or eletromagnetic fields.</p></li>
+</ul>
+
+<p>How do we know if our lighting is correctly simulating the reality lighting? We learn from this simplified model of reality. We&rsquo;ll start by defining what a <strong>radiant flux</strong> is. Given an energy function <strong>Q</strong>, and the <strong>t</strong> time, a radiant flux is defined just like any other kind of flux:</p>
+
+<p><img src="/images/bcgiaw/radiantflux.gif" alt="" /></p>
+
+<p>What does that mean, in practice? You must be no stranger to derivatives, but let&rsquo;s think about what that actually means. <strong>d</strong> is an <strong>infinitesimal interval of a function</strong>, that means, and interval that&rsquo;s so small, you can&rsquo;t get any smaller than that, but it&rsquo;s still there. Integration is nothing short of a sum of those infinitesimal intervals. So, the radiant flux is the derivative of the energy regarding the time factor, and it is meausred as <strong>Joules per second</strong>, or <strong>Watts</strong>. When we say a lightbulb is a 50W light, we&rsquo;re referring to its radiant flux. The flow of light through space is often represented by geometrical rays of light such as those used in computer graphics ray tracing.</p>
+
+<p><strong>Radiant flux density</strong> is how much flux we have per area of effect. That can be referred to as <strong>irradiance</strong>, or the variable <strong>E</strong> (as it&rsquo;s <em>éclairage</em> from French), when the light is arriving at a surface, or <strong>radiosity or radiance exitance</strong> (<strong>M</strong>) when it&rsquo;s leaving the surface.</p>
+
+<h3 id="what-is-mathematically-speaking-irradiance">What is, mathematically speaking, irradiance?</h3>
+
+<p><img src="/images/bcgiaw/irradiancefromflux.gif" alt="" /></p>
+
+<p><em>Irradiance formula. As it&rsquo;s a division between the flux and the area, it&rsquo;s measured as W/m².</em></p>
+
+<p>The formula for the radiance exitance is pretty much the same, but remember that the flux &phi; will be another number. Fortunately, there&rsquo;s a function that receives the irradiance as input and outputs the color of the surface, as we&rsquo;ll see later. But for now, let&rsquo;s focus on an example.</p>
+
+<p>Let&rsquo;s calculate the total irradiance for a sphere that&rsquo;s receiving a &phi; radiant flux equally from all directions. This can be done by integrating the irradiance formula in regards to the total area of the sphere, which is equal to:</p>
+
+<p><img src="/images/bcgiaw/sphereirradiance.gif" alt="" /></p>
+
+<p>The radiance flux density can be measured anywhere in an n-dimensional space, regardless if you have a surface of a physical object, the vacuum or air between them, or a mathematical (real of imaginary) plane. Which is great, because now we can measure radiant intensity.</p>
+
+<p>Radiant intensity is defined as:</p>
+
+<p><img src="/images/bcgiaw/radiantintensity.gif" alt="" /></p>
+
+<p>Given that &phi;, as we already saw, is the radiant flux and &omega; is the <strong>solid angle</strong> emanating from a light source.</p>
+
+<h3 id="the-hell-is-a-solid-angle">The hell is a solid angle??</h3>
+
+<p><img src="/images/bcgiaw/solidangle.png" alt="" /></p>
+
+<p>This is a solid angle. But to understand what it is mathematically, let&rsquo;s first ask ourselves, what is an angle? It&rsquo;s one of those mathematical concepts that you may know what it means abstractly, but it&rsquo;s hard to put it into words, right?</p>
+
+<p>You can say that an angle is a figure formed by two rays, but what kind of figure? It&rsquo;s a <strong>continuous set of directions in a plane</strong>, or you can consider it to be, instead, a fraction: the fraction between a circle segment and the ray of the sphere. That gives our angle value in <strong>radians</strong>. By analogy, a solid angle is the 3D extension of an angle: it&rsquo;s a set of continuous directions which can be defined as the fraction between the area of the sphere segment contained by it over the radius of the sphere. This value is referred to as <strong>steredians</strong>, as shown in the image above.</p>
+
+<p>Now we can understand what radiant intensity actually means. It&rsquo;s measures in Watts per steredians. Let&rsquo;s calculate the radiant intensity for an isotropic point light source, that means, a point that emits light equally to all directions.</p>
+
+<p><img src="/images/bcgiaw/fluxfromintensity.gif" alt="" /></p>
+
+<p>We can find what the sum of all solid angles in the spherical surface defined by S² by using spherical coordinates:</p>
+
+<p><img src="/images/bcgiaw/sphericalcoordinates.png" alt="" /></p>
+
+<p>We know that:</p>
+
+<p><img src="/images/bcgiaw/isotropicpoint0.gif" alt="" /></p>
+
+<p>Substituting the value of &Omega; in the equation above, the result we get for <strong>I</strong> is:</p>
+
+<p><img src="/images/bcgiaw/isot.gif" alt="" /></p>
+
+<h3 id="radiance">Radiance</h3>
+
+<p>This is the last mathematical light concept we&rsquo;re going to convey before we finally get to colors, and maybe the most important. Because radiance is what the sensors measure. It is the <strong>infinitesimal amount of radiant flux contained in a single ray of light emanating from a surface</strong>. This is also of prime importance to global illumination, and we&rsquo;ll see the radiance equation later on when we get there, once again.</p>
+
+<p>Think of a single ray of light coming out of a surface and the projected area of its solid angle. We&rsquo;ll call the area the ray is coming from the surface <strong>dA</strong>, as it&rsquo;s an infinitesimal piece of area on the surface. If our ray defines a &theta; angle with the surface, we can notice that the projected area of this ray will be <strong>dAcos</strong>&theta;. Picture the following scenario in your mind: a piece of area is projected according to a ray in a direction. This is the area we have for our ray of light.</p>
+
+<p>We can say that the radiance is the flux contained in the area in regards to both the solid angle and the area from the surface where it&rsquo;s projected, given a position <strong>x</strong> and solid angle &omega;:</p>
+
+<p><img src="/images/bcgiaw/radianceequation.gif" alt="" /></p>
+
+<p><strong>A quick challenge: calculate the total flux emanating from a circular, plane area which is a diffuse emitter (it emits light equally to all directions. Assume that all L&rsquo;s are equal to 1 watt per square meter per steradian and the circle radius is 1). Here&rsquo;s a bit of help: given the radiance equation, you can deduce that:</strong></p>
+
+<p><img src="/images/bcgiaw/challenge0.gif" alt="" /></p>
+
+<p><strong>where A is the area of the circle and H² is the entire upper hemisphere.</strong></p>
+
+<h3 id="how-to-deal-with-colors">How to deal with colors</h3>
+
+<p>Colors are an interesting topic. The visible light as we know can be categorized by wavelengths from about 400 (violet) to 700 nanometers (red color) in a continuous space. So why do computers only have three types of color output?</p>
+
+<p>It&rsquo;s about exploring the limitations of human vision in the end. The human visual system is highly complex and non-linear, but it&rsquo;s far from perfect. We can see colors, unlike lots of animals, but still, we can exploit the wave form of the colors to generate a new color whose frequency is not really being emitted by the source of light, or even to generate new colors (ever heard that <a href="https://www.youtube.com/watch?v=S9dqJRyk0YM">the pink color is actually not real</a>?)</p>
+
+<p>Every color can be defined as a Fourier transform. That means it&rsquo;s a sum of different wave-like equations, that is, equations that involve <strong>sin</strong>, <strong>cos</strong> and functions like that. Or being more mathematically rigorous, a Fourier transform is something like this, in its sine-cosine form:</p>
+
+<p><img src="/images/bcgiaw/fourier.gif" alt="" /></p>
+
+<p>If two waves meet, there is something we call <strong>interference</strong>. That means that the two waves sum to each other (and the sum of two Fourier transforms is another Fourier transform), we&rsquo;ll have another different kind of wave, which can have its own properties. That&rsquo;s the case for pink, and that&rsquo;s why we use only red, green and blue in computers. The interference between them can generate colors that are visible at other frequencies, and our vision can&rsquo;t tell these waves apart so they just consider them to be one.</p>
+
+<p>So in the next sections, when we talk about the output color of a material function, we&rsquo;ll be considering three channels: red, green and blue. There are other ways to represent color, which we won&rsquo;t talk about here.</p>
+
+<h3 id="introduction-to-materials-brdfs-and-other-lighting-functions">Introduction to materials: BRDFs and other lighting functions</h3>
+
+<p>The next topic to cover are the materials of our object, or as I&rsquo;ve mentioned previously, the functions which take as input the irradiance on a surface and outputs a color. We know that different surfaces interact with light in different ways (for example, sand paper won&rsquo;t reflect the light the way a mirror does). We can say that <strong>the light incident on a surface is equal to the light which is reflected, plus the light which is absorbed, plus the light which is transmitted</strong>. We won&rsquo;t cover the transmitted light today, but we&rsquo;ll cover the other two. More specifically, we&rsquo;ll consider that when the light is not reflected, it is absorbed. That means a blue object will absorb all colors, except for blue.</p>
+
+<p><img src="/images/bcgiaw/brdf_sphere_lambertian.png" alt="" /> <img src="/images/bcgiaw/brdf_sphere.png" alt="" /></p>
+
+<p><em>A sphere with a diffuse material (also called Lambertian) vs. a sphere with a glossy reflection material (also called specular), made in Blender</em></p>
+
+<p>In terms of the concepts that we defined before, we can say that, when a light ray reaches a surface, it will be reflected in a mirrored way by the material, or, more specifically, the reflected differential radiance is proportional to the differential irradiance we get as input. Or:</p>
+
+<p><img src="/images/bcgiaw/irradianceproptoradiance.gif" alt="" /></p>
+
+<p>which means that:</p>
+
+<p><img src="/images/bcgiaw/brdf.gif" alt="" /></p>
+
+<p>is a function (n is the surface normal at the point x. notice that n * &omega;i is the cosine between the angle on incidence and the normal). This is what we call a BRDF (<em>Bidirectional Reflectance Distribution Function</em>).</p>
+
+<p>BRDFs have some interesting properties.</p>
+
+<ul>
+<li><p>They&rsquo;re <strong>linear</strong>, which means that the value of the BRDF for a specific indicent direction is not dependent on the possible presence of irradiance along other incident angles. In other words, if you have a diffuse reflection BRDF and a glossy (kinda shiny, in a specific direction) BRDF on the same material, they sum up just fine.</p></li>
+
+<li><p>They&rsquo;re <strong>reciprocal</strong>, which means that the value of the reflected light is the same when the angles of the irradiance and the radiance are switched. This is also called the <strong>Helmholtz reciprocity</strong>. In practice, reciprocity is often violated in rendering, but it&rsquo;s useful to know whether a BRDF is physically plausible.</p></li>
+
+<li><p>They conserve energy. That means that the reflected light flux should never be greater than the irradiant light flux. Or in a strictly mathematical language:</p></li>
+</ul>
+
+<p><img src="/images/bcgiaw/conservationofenergy.gif" alt="" /></p>
+
+<p><strong>Now let&rsquo;s calculate the BRDF for an ideal diffuse surface.</strong> You&rsquo;ll see why we&rsquo;re doing that later on. Since the radiance <strong>L</strong> is the same in all directions, we can consider it a constant function and call it a <strong>diffuse constant</strong>. We can then move it away from the integral, since it&rsquo;s a constant. We can also say that:</p>
+
+<p><img src="/images/bcgiaw/reflectionequation.gif" alt="" /></p>
+
+<p>Now in proper english, what does all of that mean? It means that the <strong>if we get the irradiance at an angle, multiply it by the cosine between this angle and the surface normal, multiply it by all the solid angle possibilities, sum up the results and multiply it by the BRDF, which is a constant, we get the radiance</strong>. And this &rho; is what we call the <strong>albedo</strong>, the quocient between the reflected light and the irradiance, and it&rsquo;s a number between zero and one.</p>
+
+<p>By the definition of irradiance, we have the following:</p>
+
+<p><img src="/images/bcgiaw/diffuseconstantvalue.gif" alt="" /></p>
+
+<p><img src="/images/bcgiaw/heresjohnny.jpg" alt="" /></p>
+
+<p><em>Here&rsquo;s PI</em></p>
+
+<p>Excuse me, what is &pi; doing over there? This is one of those things that make sense mathematically, but it&rsquo;s hard to put into words. But for now, let&rsquo;s just admire the fact that &pi; just seems to be everywhere, even when it doesn&rsquo;t seem like we&rsquo;re doing something related to circles (I mean, in fact, we are right now, because all the solid angles define a circular area). Keep that value for the diffuse constant in mind though. <strong>When you render diffuse, in order to ensure energy conservation, just divide the albedo by</strong> &pi;.</p>
+
+<h3 id="brdfs-vs-bsdfs">BRDFs vs. BSDFs</h3>
+
+<p>BSDF is another term which refers to <em>Bidirectional Scattering Distribution Function</em>, and if must have seen that before if you&rsquo;re a Blender enthusiast of some sort. That function doesn&rsquo;t model the reflection directly just like a BRDF, but it considers that the ray of light &ldquo;travels around the surface&rdquo; a little before it&rsquo;s finally reflected. We&rsquo;re not going to cover BSDFs in depth today, but as you must be supposing, this is how they&rsquo;re defined mathematically:</p>
+
+<p><img src="/images/bcgiaw/bsdf.gif" alt="" /></p>
+
+<p><img src="/images/bcgiaw/bsdf_sphere.png" alt="" /> <img src="/images/bcgiaw/glass_sphere.png" alt="" /> <img src="/images/bcgiaw/toon_sphere.png" alt="" /></p>
+
+<p><em>Spheres with different BSDF materials. BSDFs are flexible and can simulate many kinds of material, such as glass, or toon materials</em></p>
+
+<p><img src="/images/bcgiaw/minust.jpg" alt="" /></p>
+
+<p><em>BSDFs can also be used to simulate skin and hair. This is a Touhou Project animation from the artist minusT, made in Blender, and can be seen on <a href="https://www.youtube.com/watch?v=PWeH_CcTq_8">Youtube</a></em></p>
+
+<h3 id="phong-s-lighting-equation">Phong&rsquo;s lighting equation</h3>
+
+<p><img src="/images/bcgiaw/diffuse_suzanne.png" alt="" /> <img src="/images/bcgiaw/specular_suzanne.png" alt="" /> <img src="/images/bcgiaw/ambient_suzanne.png" alt="" /> <img src="/images/bcgiaw/phong_suzanne.png" alt="" /></p>
+
+<p><em>A Suzanne shape from Blender&rsquo;s diffuse component, specular component, ambient light and the sum of everything, respectively</em></p>
+
+<p>Phong&rsquo;s lighting model is named after <a href="https://en.wikipedia.org/wiki/Bui_Tuong_Phong">Bui Tuong Phong</a>, a researcher and pioneer in computer graphics. Once you understand diffuse, specular and ambient components, Phong&rsquo;s lighting model is simple to both understand and reproduce. The diffuse component is what we just saw two sections above, it&rsquo;s the albedo divided by &pi;. So what about the specular and ambient components? The ambient component is just the color of the ambient light times an ambient constant we use to control how much our material is influenced by it. We do this because precise simulation of ambient light is very hard, and for the most part it is unfeasible in real time. But we&rsquo;ll see more about that in <strong>day six</strong>.</p>
+
+<p>Now we&rsquo;re left with the specular component. This one depends on the camera position, because the rays will be reflected with more intensity regarding the viewer. In order to simulate it, we&rsquo;ll use the cosine between the direction to the camera <strong>v</strong> and the incident ray <strong>r</strong>, with an exponent <strong>n</strong> which can be seen as the &ldquo;roughness&rdquo; of the specular. This is the formula for the specular:</p>
+
+<p><img src="/images/bcgiaw/specularcomponent.gif" alt="" /></p>
+
+<p>Summing up everything, we have our output color, and this is what we call the <strong>Phong&rsquo;s rendering equation</strong>:</p>
+
+<p><img src="/images/bcgiaw/phongequation.gif" alt="" /></p>
+
+<p>In other words, it&rsquo;s the ambient plus the specular plus the diffuse component. This is what will give you the value of the color (remember, for each color channel) to be rendered according to Phong&rsquo;s lighting model.</p>
+
+<h3 id="flat-gouraud-and-phong-shading">Flat, Gouraud and Phong shading</h3>
+
+<p>Now speaking of polygon meshes, since they&rsquo;re the most used in game development. All our lighting depends on normals, but we obviously won&rsquo;t have a normal for each fragment (unless we have a normal map. But what if we don&rsquo;t?). We&rsquo;ll also see that the way you distribute normals can drastically affect the lighting. Imagine we have a normal per face: that seems like the simpler case. It doesn&rsquo;t even have to be pre-computed, you can find it in real time. In this case, if we take a cilinder mesh and render it, it will look like this. And this is called <strong>flat shading</strong>.</p>
+
+<p>Alternatively, what is usually done is to give every vertex a normal, as we&rsquo;ve seen before. One option when you do that is to assign a color to each vertex according to a lighting model and inside the face, you interpolate between the colors. That is called the <strong>Gouraud shading</strong>. It seems like a good idea, but there may be cracks between the faces in the specular lighting and the darker spots.</p>
+
+<p>One approach to solve this is the <strong>Phong shading</strong> also named after the same Phong. In this case, the vertex normals are interpolated for each face fragment and then the light is applied. This generated a better result and it&rsquo;s usually what it&rsquo;s done to generate smooth polygon meshes. We can see a comparison of the three methods below:</p>
+
+<p><img src="/images/bcgiaw/shadings.jpeg" alt="" /></p>
+
+<p><em>Comparison between the 3 types of shading. Image from the <a href="https://gamedev.stackexchange.com/questions/26235/creating-smooth-lighting-transitions-using-tiles-in-html5-javascript-game">game dev stack exchange</a></em></p>
+
+<h3 id="but-phong-s-lighting-model-is-from-the-70s-and-70s-technology-is-for-the-weak-i-m-not-weak-i-m-hardcore-i-want-new-alternative-lighting-models">&ldquo;But, Phong&rsquo;s lighting model is from the 70s, and 70s technology is for the weak. I&rsquo;m not weak, I&rsquo;m hardcore. I want new, alternative lighting models!&rdquo;</h3>
+
+<p>Phong&rsquo;s lighting model, sometimes called <strong>dot product lighting</strong>, because it&rsquo;s basically what it is, really, is a rough simplification of the rendering equation. This is the rendering equation in a computer graphics formulation that is physically plausible and what we should strive for:</p>
+
+<p><img src="/images/bcgiaw/renderingequation.png" alt="" /></p>
+
+<p>where:</p>
+
+<ul>
+<li><p>L(x, &omega;i) is the radiance coming from a position <strong>x</strong> through a solid angle &omega;</p></li>
+
+<li><p>Le(x, &omega;i) is the emitted radiance of the material (yes, unlike in Phong&rsquo;s lighting model now materials can emit light too!)</p></li>
+
+<li><p>fr(&hellip;) is the BRDF</p></li>
+
+<li><p>L(x&rsquo;, &omega;0) is the incoming radiance at another position <strong>x&rsquo;</strong> and a &omega;0 solid angle</p></li>
+
+<li><p>G(x&rsquo;, x) is the geometric relation between both positions</p></li>
+
+<li><p>V(x&rsquo;, x) is the visibility of x from x&rsquo;. That can be one or zero. If it&rsquo;s zero, logically, the whole integral value is cancelled out and the reflected value is just equal to the emitted light.</p></li>
+</ul>
+
+<p>This is a lot more complicated than our Phong model and the game programmers reading this must be like &ldquo;this guy is out of his mind, I&rsquo;m not putting integrals in my shader codes.&rdquo; Luckily, you can solve this by using <strong>Monte Carlo integration</strong>. And that&rsquo;s the essence of <strong>spherical harmonics</strong>, another lighting paradigm which was first announced in 2002 by <a href="https://www.ppsloan.org/publications/shdering.pdf">Peter-Pike Sloan et al.</a> and has applications on games since 2008.</p>
+
+<p>In spherical harmonics, the surface of the sphere that is represented in the rendering equation above is decomposed in a way that&rsquo;s analogous to a Fourier transform, but instead of frequencies, we use <a href="http://mathworld.wolfram.com/LegendrePolynomial.html">associated Legendre polynomials</a>, which are like regular Legendre polynomials, but they return real numbers, to approximate the sphere harmonics function. More information on that in <a href="https://pdfs.semanticscholar.org/83d9/28031e78f15d9813061b53d25a4e0274c751.pdf">this document</a>.</p>
+
+<p>There are also alternative material models. The <strong>Cook-Torrance</strong> function is a way to model <em>microfacets</em> and use them for lighting. That means it&rsquo;s as if the surface had a roughness characteristic, and its microfacets have a distribution function <strong>D</strong> which is statistical. Cook-Torrance&rsquo;s function is used for specular lighting can replace Phong&rsquo;s specular components like this:</p>
+
+<p><img src="/images/bcgiaw/cook-torrance.png" alt="" /></p>
+
+<p>where <strong>D</strong> is the distribution function, <strong>F</strong> is the fresnel function and <strong>G</strong> is the geometry function. <a href="http://www.codinglabs.net/article_physically_based_rendering_cook_torrance.aspx">This is a good read</a> if you want to know more. The Torrance-Sparrow BRDF model is another model which considers specular microfacets. There are many other BRDF surface models such as the <a href="https://en.wikipedia.org/wiki/Specular_highlight#Ward_anisotropic_distribution">Ward Model</a>, <a href="https://en.wikipedia.org/wiki/Oren%E2%80%93Nayar_reflectance_model">Oren-Nayar model</a>, and so on.</p>
+
+<h3 id="light-source-models-for-local-illumination">Light source models for local illumination</h3>
+
+<p>To finish it for today, we&rsquo;ll briefly talk about the most common ways of representing light sources in a program. Light sources are usually <strong>point lights</strong>, <strong>directional lights</strong> or <strong>spot lights</strong>, plus the <strong>ambient light</strong> which sums up in the ambient lighting coefficient and color in case you don&rsquo;t have a global illumination system.</p>
+
+<p>Point lights are a source of light that sends flux equally to all directions. They can be modelled just by a position, a color, and maybe an <strong>energy</strong> factor which tells how strong it is.</p>
+
+<p>Directional lights are kinda like point lights, but think that they&rsquo;re so far away from the target that the rays of light gradually become almost parallel in practice. Think as an example of the sun.</p>
+
+<p>Finally, a spot light is a source of light that illuminates only a particular spot in the scene. These ones are the trickiest to program, but they can be put in memory as a position, a direction and a ray. The ray can be multiplied by the distance the light reaches before it illuminates something.</p>
+
+<p>Also keep in mind that light fades proportionally to the square of the distance, naturally.</p>
+
+<h3 id="further-reading">Further reading</h3>
+
+<ul>
+<li><p><strong>Inverse lighting</strong>. This is a problem in computer vision where we try to infer the lighting configuration from a scene that&rsquo;s already rendered. Techniques to achieve that vary from the ones mentioned in <a href="http://graphics.stanford.edu/~srm/thesis/index.html">Stephen Marschner&rsquo;s PhD Thesis</a>, which assume you know at least some information from the scene when you&rsquo;re trying to inverse-render it, or the newest approaches which depend on neural network estimations and are usually used for <strong>relighting</strong>, like <a href="https://arxiv.org/pdf/1906.03355.pdf">this</a>, <a href="http://cseweb.ucsd.edu/~ravir/portrait_relighting.pdf">this</a> or <a href="http://yuedong.shading.me/project/neuralibr/neuralibr.pdf">this</a>.</p></li>
+
+<li><p><strong>Physically Based Rendering</strong>. Actually, the BRDFs we just reviewed here are physically-based, since they are reciprocal, conserve energy and respect Helmholtz&rsquo; reciprocity, but PBR has become a huge word in game development these days and I thought I should at least mention that. The <a href="http://www.pbr-book.org/">PBR Book</a> is probably the best free source for that, and there are many examples of not only BRDFs but BSDFs which are used today in real-time rendering and non-real-time. If you&rsquo;re planning to program materials nowdays, this is worth a read.</p></li>
+</ul>
+
+<p>There are lots of stuff to read yet, but after that barrage of integrals and functions, I think we deserve a rest. So I decided, before I get to the next step, which is <strong>rasterisation and raytracing</strong>, I should spare one day so that we practice what we&rsquo;ve learned a little. The next post will be ready some day. Soon (maybe not, don&rsquo;t count on it).</p>
+
+<p><a href="/post/day_one_introduction_basic_computer_graphics_in_a_week/">Day one - introduction</a></p>
+
+<p><a href="/post/day_two_transforms_basic_computer_graphics_in_a_week/">Day two - transforms</a></p>
+
+<p><a href="/post/day_three_modelling_basic_computer_graphics_in_a_week/">Day three - modelling</a></p>
+
+<p><a href="/post/interlude_bits_of_opengl">Interlude - Bits of OpenGL</a></p>
+</div>
+                    <br />
+                    <br />
+                    <div class="less">Page link: <a href="/post/day_four_local_illumination_and_materials/" class="pagelink">/post/day_four_local_illumination_and_materials/</a></div>
+                    <div class="line-dotted"></div>
+                <article>
+            </div>
+            <footer>
+    <div>
+    
+        &#xA9; 2019 by guangmean. All Rights Reserved.
+    
+    </div>
+</footer>
+
+        </div>
+        <div class="ads">
+    
+    
+</div>
+
+    </div>
+
+
+  <script src="/js/vendor/modernizr-3.6.0.min.js"></script>
+<script src="/js/vendor/jquery-3.3.1.min.js"></script>
+<script>window.jQuery || document.write('<script src="\/js/vendor/jquery-3.3.1.min.js"><\/script>')</script>
+<script src="/js/plugins.js"></script>
+<script src="/js/main.js"></script>  
+
+<script src="/js/vendor/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad();</script>
+                                                       
+
+<script>                                             
+    window.ga = function () { ga.q.push(arguments) }; ga.q = []; ga.l = +new Date;
+ga('create', 'UA-******', 'auto'); ga('send', 'pageview')
+</script>                                            
+<script src="//www.google-analytics.com/analytics.js" async defer></script>
+
+
+</body>
+</html>
