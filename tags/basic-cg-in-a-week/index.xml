@@ -6,12 +6,17 @@
     <description>Recent content in basic-cg-in-a-week on guilherme torres</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+<<<<<<< HEAD
     <lastBuildDate>Fri, 30 Aug 2019 19:57:02 -0300</lastBuildDate>
+=======
+    <lastBuildDate>Mon, 26 Aug 2019 19:57:02 -0300</lastBuildDate>
+>>>>>>> b5a0fef4744c695e5495352f3e9ad8cb13497e55
     
 	<atom:link href="http://example.github.io/tags/basic-cg-in-a-week/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+<<<<<<< HEAD
       <title>Day four: local illumination and materials (Basic Computer Graphics in a Week)</title>
       <link>http://example.github.io/post/day_four_local_illumination_and_materials/</link>
       <pubDate>Fri, 30 Aug 2019 19:57:02 -0300</pubDate>
@@ -21,6 +26,8 @@
     </item>
     
     <item>
+=======
+>>>>>>> b5a0fef4744c695e5495352f3e9ad8cb13497e55
       <title>Day three: modelling (Basic Computer Graphics in a Week)</title>
       <link>http://example.github.io/post/day_three_modelling_basic_computer_graphics_in_a_week/</link>
       <pubDate>Mon, 26 Aug 2019 19:57:02 -0300</pubDate>

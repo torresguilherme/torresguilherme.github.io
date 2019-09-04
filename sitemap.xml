@@ -15,6 +15,58 @@
   </url>
   
   <url>
+<<<<<<< HEAD
+    <loc>http://example.github.io/categories/</loc>
+    <lastmod>2019-08-26T19:57:02-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/post/day_three_modelling_basic_computer_graphics_in_a_week/</loc>
+    <lastmod>2019-08-26T19:57:02-03:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/post/</loc>
+    <lastmod>2019-08-26T19:57:02-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/tags/</loc>
+    <lastmod>2019-08-26T19:57:02-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/tags/basic-cg-in-a-week/</loc>
+    <lastmod>2019-08-26T19:57:02-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/tags/computer-science/</loc>
+    <lastmod>2019-08-26T19:57:02-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/categories/en-us/</loc>
+    <lastmod>2019-08-26T19:57:02-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/tags/graphics/</loc>
+    <lastmod>2019-08-26T19:57:02-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/</loc>
+    <lastmod>2019-08-26T19:57:02-03:00</lastmod>
+    <priority>0</priority>
+=======
     <loc>http://example.github.io/tags/basic-cg-in-a-week/</loc>
     <lastmod>2019-08-30T19:57:02-03:00</lastmod>
   </url>
@@ -62,6 +114,12 @@
   <url>
     <loc>http://example.github.io/post/day_three_modelling_basic_computer_graphics_in_a_week/</loc>
     <lastmod>2019-08-26T19:57:02-03:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/post/day_two_transforms_basic_computer_graphics_in_a_week/</loc>
+    <lastmod>2019-08-26T07:17:46-03:00</lastmod>
+>>>>>>> 0cea10b62e4e4ae39522d44fddcbe461729b1253
   </url>
   
   <url>

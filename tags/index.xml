@@ -6,7 +6,11 @@
     <description>Recent content in Tags on guilherme torres</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+<<<<<<< HEAD
     <lastBuildDate>Fri, 30 Aug 2019 19:57:02 -0300</lastBuildDate>
+=======
+    <lastBuildDate>Mon, 26 Aug 2019 19:57:02 -0300</lastBuildDate>
+>>>>>>> b5a0fef4744c695e5495352f3e9ad8cb13497e55
     
 	<atom:link href="http://example.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +18,11 @@
     <item>
       <title>basic-cg-in-a-week</title>
       <link>http://example.github.io/tags/basic-cg-in-a-week/</link>
+<<<<<<< HEAD
       <pubDate>Fri, 30 Aug 2019 19:57:02 -0300</pubDate>
+=======
+      <pubDate>Mon, 26 Aug 2019 19:57:02 -0300</pubDate>
+>>>>>>> b5a0fef4744c695e5495352f3e9ad8cb13497e55
       
       <guid>http://example.github.io/tags/basic-cg-in-a-week/</guid>
       <description></description>
@@ -23,7 +31,11 @@
     <item>
       <title>computer-science</title>
       <link>http://example.github.io/tags/computer-science/</link>
+<<<<<<< HEAD
       <pubDate>Fri, 30 Aug 2019 19:57:02 -0300</pubDate>
+=======
+      <pubDate>Mon, 26 Aug 2019 19:57:02 -0300</pubDate>
+>>>>>>> b5a0fef4744c695e5495352f3e9ad8cb13497e55
       
       <guid>http://example.github.io/tags/computer-science/</guid>
       <description></description>
@@ -32,7 +44,11 @@
     <item>
       <title>graphics</title>
       <link>http://example.github.io/tags/graphics/</link>
+<<<<<<< HEAD
       <pubDate>Fri, 30 Aug 2019 19:57:02 -0300</pubDate>
+=======
+      <pubDate>Mon, 26 Aug 2019 19:57:02 -0300</pubDate>
+>>>>>>> b5a0fef4744c695e5495352f3e9ad8cb13497e55
       
       <guid>http://example.github.io/tags/graphics/</guid>
       <description></description>
