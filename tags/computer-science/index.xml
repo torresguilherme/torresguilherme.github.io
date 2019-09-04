@@ -6,10 +6,29 @@
     <description>Recent content in computer-science on guilherme torres</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 26 Aug 2019 07:17:46 -0300</lastBuildDate>
+    <lastBuildDate>Fri, 30 Aug 2019 19:57:02 -0300</lastBuildDate>
     
 	<atom:link href="http://example.github.io/tags/computer-science/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Day four: local illumination and materials (Basic Computer Graphics in a Week)</title>
+      <link>http://example.github.io/post/day_four_local_illumination_and_materials/</link>
+      <pubDate>Fri, 30 Aug 2019 19:57:02 -0300</pubDate>
+      
+      <guid>http://example.github.io/post/day_four_local_illumination_and_materials/</guid>
+      <description>This is the hardest, most complex post of this series. Bonus points if you understand everything. Light is a fundamental part of graphics, and today we learn how to emit it and how to react to it. And there are many, many (did I say many? there are many, just in case I didn&amp;rsquo;t make myself clear) ways of programming illumination in graphics. Some are better than others overall, some are more costly, some are just well-suited for real-time rendering like video games.</description>
+    </item>
+    
+    <item>
+      <title>Day three: modelling (Basic Computer Graphics in a Week)</title>
+      <link>http://example.github.io/post/day_three_modelling_basic_computer_graphics_in_a_week/</link>
+      <pubDate>Mon, 26 Aug 2019 19:57:02 -0300</pubDate>
+      
+      <guid>http://example.github.io/post/day_three_modelling_basic_computer_graphics_in_a_week/</guid>
+      <description>Breathe. Focus. Let&amp;rsquo;s go. Credits to https://github.com/danielepanozzo/cg for some of the images used in the interpolation sections.
+I hope the maths didn&amp;rsquo;t scare you away in the last post. If you stuck around after the last read, that&amp;rsquo;s very good, because you just went past one of the fundamental topics of graphics. But now that you know what to do with the model points before rendering, now you should know what are exactly our models.</description>
+    </item>
     
     <item>
       <title>Day two: transforms (Basic Computer Graphics in a Week)</title>
