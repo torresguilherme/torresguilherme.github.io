@@ -6,10 +6,19 @@
     <description>Recent content in Posts on guilherme torres</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 30 Aug 2019 19:57:02 -0300</lastBuildDate>
+    <lastBuildDate>Wed, 30 Oct 2019 13:05:29 -0300</lastBuildDate>
     
 	<atom:link href="http://example.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Interlude: Bits of OpenGL, part 1 (Basic Computer Graphics in a week)</title>
+      <link>http://example.github.io/post/interlude_bits_of_opengl/</link>
+      <pubDate>Wed, 30 Oct 2019 13:05:29 -0300</pubDate>
+      
+      <guid>http://example.github.io/post/interlude_bits_of_opengl/</guid>
+      <description>This is an optional read for BCGIAW. We met our transforms in day two, knew our 3D models in day three and integrated like mad men in day four. How about we put that into practice a little? It&amp;rsquo;s been some time since I last posted here and it&amp;rsquo;ll be some time until the next post comes out, too. These weeks are being pretty busy as the CVPR deadline approaches.</description>
+    </item>
     
     <item>
       <title>Day four: local illumination and materials (Basic Computer Graphics in a Week)</title>
@@ -17,7 +26,8 @@
       <pubDate>Fri, 30 Aug 2019 19:57:02 -0300</pubDate>
       
       <guid>http://example.github.io/post/day_four_local_illumination_and_materials/</guid>
-      <description>This is the hardest, most complex post of this series. Bonus points if you understand everything. Light is a fundamental part of graphics, and today we learn how to emit it and how to react to it. And there are many, many (did I say many? there are many, just in case I didn&amp;rsquo;t make myself clear) ways of programming illumination in graphics. Some are better than others overall, some are more costly, some are just well-suited for real-time rendering like video games.</description>
+      <description>EDIT: some corrections in this article were contributions from criver from the Graphics Programming Discord community. Not every color is a Fourier transform, and I wrote &amp;ldquo;Phong&amp;rsquo;s rendering equation&amp;rdquo; instead of &amp;ldquo;Phong&amp;rsquo;s lighting model&amp;rdquo;
+This is the hardest, most complex post of this series. Bonus points if you understand everything. Light is a fundamental part of graphics, and today we learn how to emit it and how to react to it.</description>
     </item>
     
     <item>

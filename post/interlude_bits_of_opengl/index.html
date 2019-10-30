@@ -1,0 +1,522 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1">
+    <title>Interlude: Bits of OpenGL, part 1 (Basic Computer Graphics in a week) - guilherme torres</title>
+
+    
+    <meta name="keywords" content="">
+    <meta name="description" content="This is an optional read for BCGIAW. We met our transforms in day two, knew our 3D models in day three and integrated like mad men in day four. How about we put that into practice a little?">
+    <meta property="og:image", content=/images/bcgiaw/interlude-part-1.jpg>
+    
+    <link rel="stylesheet" href="/css/highlight.min.css">
+    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href="/css/diello.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-******",
+            enable_page_level_ads: true
+        });
+    </script>
+    
+    
+</head>
+
+
+<body>
+    <!--[if lte IE 9]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+    <![endif]-->
+
+  
+    <div class="flex-column">
+        <div class="ads">
+    
+    
+</div>
+
+        <div class="home">
+            <div class="logo">
+                <h1><a href="/">guilherme torres</a></h1>
+            </div>
+            <div class="navigation">
+    
+        
+        
+        
+        <a href="/" class="">home</a>
+        
+        <a href="/contact/" class="">yes, please bother me</a>
+        
+        <a href="/about/" class="">literally who??</a>
+        
+        <a href="/art/" class="">my arts and crafts</a>
+        
+        
+        <a href="javascript:void(0);" class="current">ARTICLE</a>
+        
+    
+</div>
+
+            <div>
+                <article>
+                    <h3>Interlude: Bits of OpenGL, part 1 (Basic Computer Graphics in a week)</h3>
+                    <div class="less">
+                        <time>Published: Wednesday, Oct 30, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;16 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 3265 words
+                    </div>
+                    <div class="em">
+
+<h3 id="this-is-an-optional-read-for-bcgiaw-we-met-our-transforms-in-day-two-knew-our-3d-models-in-day-three-and-integrated-like-mad-men-in-day-four-how-about-we-put-that-into-practice-a-little">This is an optional read for BCGIAW. We met our transforms in day two, knew our 3D models in day three and integrated like mad men in day four. How about we put that into practice a little?</h3>
+
+<p>It&rsquo;s been some time since I last posted here and it&rsquo;ll be some time until the next post comes out, too. These weeks are being pretty busy as the CVPR deadline approaches. But I&rsquo;ve been working on some interesting things involving OpenGL and thought, why not make an OpenGL post to put into practice all I&rsquo;ve talked about in the previous days? Of course, this is going to take some programming knowledge, particularly C++, and I don&rsquo;t see myself as the right person to teach programming from scratch to someone, so I&rsquo;ll just assume whoever is reading this has a reasonable knowledge of C++. Now let&rsquo;s get to work.</p>
+
+<h2 id="setting-up">Setting up</h2>
+
+<p>Setup is the boring part of the process. First, because it requires a little bit of patience and it involves less thinking and more manual work. Second, because it heavily depends on your platform of development. I&rsquo;m a Linux user, so here I&rsquo;ll be able to cover in detail the Linux use case. I won&rsquo;t be able to give that much attention to Windows.</p>
+
+<p>Here we use <a href="https://www.glfw.org/">GLFW</a> as a window/input manager, <a href="https://glad.dav1d.de/">GLAD</a> as an OpenGL wrapper, since it&rsquo;s one of the most up-to-date as we speak, and we could develop our own matrix and vector math library with the knowledge we have right now, but why bother when it&rsquo;s already done with <a href="https://glm.g-truc.net/0.9.9/index.html">GLM</a>. (Actually, here&rsquo;s a challenge for you: try to make your own CG maths library! With your day two and three knowledge, you should have what it takes to do so.)</p>
+
+<h3 id="setup-on-linux">Setup on Linux</h3>
+
+<p>First we need to install the GLFW development libraries. Look for <strong>libglfw3-dev</strong> on Ubuntu for example or <strong>libglfw3-devel</strong> in some distros like openSUSE, that will give you both the runtime shared objects and the development headers. Same thing with GLM, you&rsquo;ll be able to find <strong>glm-dev/-devel</strong> in most distros&rsquo; official repositories. If nothing works, you can check the links above for instructions on how to build those libraries.</p>
+
+<p>Unfortunately GLAD isn&rsquo;t that easy. As there are many possible versions for GLAD, we must enter the website (which is linked above), choose an OpenGL version string and download the library as a .zip file. In this example we&rsquo;ll be using OpenGL version 3.3 core. So this is how you want your configs to be:</p>
+
+<p><img src="/images/bcgiaw/glad.png" alt="" /></p>
+
+<p>After this is done, you can put the files in the include/ directory in your /usr/include and the programs will be able to link it between &lt;&gt; brackets. Remember to include the glad.c file in your project and build a shared object for it in order to compile the whole thing!</p>
+
+<p>And speaking of compiling, you&rsquo;ll also want a <strong>makefile</strong>,. If you&rsquo;ve never made one, no problem, here&rsquo;s mine:</p>
+
+<pre><code class="language-makefile">CC := clang++
+CFLAGS := -std=c++11
+GFLAGS := -lGL -lglfw -ldl
+MAIN := src/main.cpp
+MOD_OBJS := src/glad.o
+OUT := a.out
+
+all: $(MOD_OBJS)
+	$(CC) $(MAIN) $(MOD_OBJS) -o $(OUT) $(CFLAGS) $(GFLAGS)
+
+src/glad.o: src/glad.c
+	$(CC) -c $&lt; -o $@ $(CFLAGS) $(GFLAGS)
+
+%.o: %.cpp
+	$(CC) -c $&lt; -o $@ $(CFLAGS) $(GFLAGS)
+
+clean:
+	rm -rf **/*.o
+</code></pre>
+
+<p>I&rsquo;m assuming you have a src/ directory where you&rsquo;ll keep all of the files in the source code, for the sake of organization. Here&rsquo;s what each thing means:</p>
+
+<ul>
+<li><p><strong>CC</strong> is a variable. In this case it contains the command for the compiler we&rsquo;re going to use. In this case I&rsquo;m using <strong>clang++</strong>, but it could be g++ or some other as well</p></li>
+
+<li><p><strong>CFLAGS</strong> are the C++ flags we&rsquo;ll use to compile. In our case we only need <strong>-std=c++11</strong> because we&rsquo;ll be using the standard C++11.</p></li>
+
+<li><p><strong>GFLAGS</strong> are the links to the header of each library we&rsquo;re using in our OpenGL application. -lGL links the GL libraries, -lglfw is used for GLFW3 and -ldl is for libdl, which GLAD uses on Linux.</p></li>
+
+<li><p><strong>MAIN</strong> is our main file, in our case, <strong>src/main.cpp</strong>.</p></li>
+
+<li><p><strong>MOD_OBJS</strong> are the objects we&rsquo;re going to build. Each one of them will have a <strong>rule</strong> for itself, which we&rsquo;ll see later on. We&rsquo;ll also add more objects to this variable as the project grows on.</p></li>
+
+<li><p><strong>OUT</strong> is just the executable name. We&rsquo;ll go with <strong>a.out</strong>.</p></li>
+
+<li><p>Now on to rules. When the makefile gets first executed it will look for the <strong>all</strong> command, which requires the existence of each of the MOD_OBJS files, or if it doesn&rsquo;t find them, it&rsquo;s going to execute the rule for the ones he doesn&rsquo;t find. After all the object files are obtained, the command to compile the final executable with main.cpp is executed</p></li>
+
+<li><p>I made two rules for objects, one for <strong>src/glad.o</strong>, which is different because all the files in the source code are .cpp files except for this one. The other one gets an object for whatever .o is in the MOD_OBJS list, finds whatever .cpp file has the same name prefix and compiles it.</p></li>
+
+<li><p>Finally there&rsquo;s the rule <strong>clean</strong> which just looks for .o files recursively and deletes them. You&rsquo;ll want to do that to clean up all those object files sometimes.</p></li>
+</ul>
+
+<p>In order to use the makefile, just type the command <strong>make</strong> in the directory where the makefile is. To use a particular rule, you type <strong>make &ldquo;name_of_the_rule&rdquo;</strong> in the terminal, like <em>make clean</em>.</p>
+
+<h3 id="setup-on-windows">Setup on Windows</h3>
+
+<p>Honestly I can&rsquo;t help a lot with Windows, but the easiest way to do this as far as I know is by using Visual Studio. Create a new project, then add the GLFW, GLM and GLAD headers and runtime libraries to it. Remember we&rsquo;re using the OpenGL 3.3 version core, so get the right GLAD version for you, and also remember we&rsquo;re using C++11 here. Unless, of course, you want to do something different than me, which you&rsquo;re free to do.</p>
+
+<h3 id="glfw">GLFW</h3>
+
+<p>Now on to the code. First of all we&rsquo;d like to add the headers for GLFW, and a little bit of error handling, so this is what our main.cpp is going to look like at first:</p>
+
+<pre><code class="language-cpp">#include &lt;GLFW/glfw3.h&gt;
+#include &lt;iostream&gt;
+
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 450
+
+int main()
+{
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, &quot;Bits of OpenGL&quot;, NULL, NULL);
+
+    if(window == NULL)
+    {
+        std::cout&lt;&lt;&quot;Failed to create GLFW window\n&quot;;
+        glfwTerminate();
+        return -1;
+    }
+    glfwMakeContextCurrent(window);
+
+    // render loop
+    while(!glfwWindowShouldClose(window))
+    {
+        glfwSwapBuffers(window);
+        glfwPollEvents();    
+    }
+
+    glfwTerminate();
+    return 0;
+}
+</code></pre>
+
+<p>What this code is doing is, first of all, initializing GLFW and giving it the OpenGL context we&rsquo;d like before we initialize the window. Also notice that we declare the OpenGL profile as &ldquo;core&rdquo; (the default is compatibility, but in the core profile all of the old OpenGL functions are deprecated. You can read about it <a href="https://www.khronos.org/opengl/wiki/OpenGL_Context#Forward_compatibility">here</a>). Then we initialize the window with <code>glfwCreateWindow()</code>, and pass the window width, height, the title and two paramenters (monitor and share, which we won&rsquo;t cover today) as NULL. The window is created shortly after, with a little bit of error handling.</p>
+
+<p>Then we have the render loop, this will run as long as the GLFW window is active. We exit this loop when we close the GLFW window. Rendering occurs in frame buffers, and in this case we&rsquo;re using two (the current being shown on the screen and the one being written to), so we swap the buffers, read the events to check if the window should close and do this as long as the program isn&rsquo;t terminated.</p>
+
+<p>Finally we deactivate GLFW to free our memory as good citizens and exit the program.</p>
+
+<h3 id="glad">GLAD</h3>
+
+<p>When you initialize GLAD you have access to the GL functions from the version which you&rsquo;ve picked up the library at the website. Include the GLAD header and put this after you initalized your window:</p>
+
+<pre><code class="language-cpp">    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        std::cout&lt;&lt;&quot;Failed to initialize GLAD\n&quot;;
+        return -1;
+    }
+</code></pre>
+
+<p>This will initialize GLAD. After you&rsquo;ve done that you probably want to make a callback so that you can re-size the viewport as the window is resized. Use this function signature:</p>
+
+<pre><code class="language-cpp">void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+</code></pre>
+
+<p>And this function declaration:</p>
+
+<pre><code class="language-cpp">void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
+</code></pre>
+
+<p>In order to assign this callback you need to put this (right after GLAD is initialized):</p>
+
+<pre><code class="language-cpp">    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+</code></pre>
+
+<p>And it&rsquo;s time to enable some OpenGL parameters. Do this before the render loop as you&rsquo;ll be setting an internal API state which will be used in runtime.</p>
+
+<pre><code class="language-cpp">    glClearColor(0.1, 0.1, 0.1, 1.0);
+    glEnable(GL_DEPTH_TEST);
+</code></pre>
+
+<p>The clear color is the background color, or what it&rsquo;s drawn when nothing is in front of it on the screen. Depth test is enabled too, so that we can know when the fragment is behind another one in the rendering (<a href="https://learnopengl.com/Advanced-OpenGL/Depth-testing">read more about it here</a>). Finally, this is how our new render loop is going to look like:</p>
+
+<pre><code class="language-cpp">    while(!glfwWindowShouldClose(window))
+    {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glfwSwapBuffers(window);
+        glfwPollEvents();    
+    }
+</code></pre>
+
+<p>When you compile and run the program (hopefully it will compile OK), you get this window with a grey background. You can resize it, just as I did on the screenshot:</p>
+
+<p><img src="/images/bcgiaw/grey-window.png" alt="" /></p>
+
+<p>If you see that, everything works. We can now get down to work with actual OpenGL now.</p>
+
+<h2 id="setting-up-the-matrices-and-the-camera">Setting up the matrices and the camera</h2>
+
+<p>Since we&rsquo;re just rendering one object today, we can settle with a few GLM calls inside the render function. This is how we do it at the start: create a new <code>render.hpp</code> with the signature of your render() method, like this:</p>
+
+<pre><code class="language-cpp">#pragma once
+
+void render();
+</code></pre>
+
+<p>Soon we&rsquo;ll pass the parameters to this function, but don&rsquo;t worry about it now. This is how my <code>render.cpp</code>, with the function definition, looks like:</p>
+
+<pre><code class="language-cpp">#include &quot;render.hpp&quot;
+#include &lt;glad/glad.h&gt;
+#include &lt;glm/glm.hpp&gt;
+#include &lt;glm/gtc/matrix_transform.hpp&gt;
+
+void render()
+{
+    auto translate = glm::mat4();
+    auto rotation = glm::mat4();
+    auto scale = glm::mat4();
+
+    auto model_mat = translate * scale * rotation;
+
+    auto view_mat = glm::lookAt(
+        glm::vec3(0.0, 0.0, 3.0),
+        glm::vec3(0.0, 0.0, 0.0),
+        glm::vec3(0.0, 1.0, 0.0)
+    );
+
+    auto projection_mat = glm::perspective&lt;float&gt;(45.0, 16.0/9.0, 0.001, 1000);
+
+    auto transform = projection_mat * view_mat * model_mat;
+</code></pre>
+
+<p>Now, what is going on here? You may have noticed we included the GLAD files as well. This will be necessary when we actually render some stuff. Then we include the GLM .hpp file, plus the matrix transform header in the &ldquo;gtc&rdquo; folder, which is necessary so we can make some matrix transformations. Then we declare our three components of the <strong>model matrix</strong> (you should remember all three from the day two fo the series). They&rsquo;re all identity matrices here, but you can play with them if you want. Just use the <code>translate</code>, <code>scale</code> and <code>rotate</code> functions from the <code>matrix_transform.hpp</code> header. We also use <strong>auto</strong> because I don&rsquo;t really feel the need to specify the variable type twice.</p>
+
+<p>Following that up, we set up our view matrix. The parameters for the <code>lookAt</code> function are respectively the <strong>eye</strong> vector, the <strong>target</strong> and the <strong>up</strong> direction. You can notice that our camera is a little further away from the world&rsquo;s origin, but looking straight at it (because our object is going to be there).</p>
+
+<p>Now for the projection matrix, we&rsquo;ll make a perspective projection (but, by all means, try the orthogonal one as well if you wish). The parameters are a different way to represent a frustum than what we saw in day two, but they can be converted to each other just fine. The ones GLM uses are the field of view (how &ldquo;wide&rdquo; is the camera reaching), the screen resolution (we&rsquo;re using a 16:9 display), and the near and far parameters.</p>
+
+<p>If we multiply that all up (remember, in the right order!) than we have our transform matrix we&rsquo;ll pass to the shader later on. But before we do it, we should set up some other things. You can compile just fine, but don&rsquo;t forget to add <code>render.o</code> to the <strong>MOD_OBJS</strong> variable in the makefile (if you are using a makefile).</p>
+
+<h2 id="importing-obj-files-and-sending-data-to-the-gpu">Importing .obj files and sending data to the GPU</h2>
+
+<p>As we saw in day three, our object needs to be represented somehow. Here we use polygon meshes, specifically a triangle mesh. But the first step to do it is to generate one, right? Luckily <strong>Blender</strong> is there to make our job easy. If you don&rsquo;t know Blender yet, it&rsquo;s a fantastic piece of software which does pretty much all things graphics (rendering, modelling, sculpting, video editing, physics simulation, and some stuff that I don&rsquo;t even know about) and recently they released a new version 2.8 which has an interface that made it a lot easier to use than before. Of course, you can get your mesh from somewhere else instead of doing it yourself, but remember: you want a .obj file that has vertex positions (of course), face indices, <strong>UV coordinates</strong> and <strong>vertex normals</strong> (yes, not all of them have that. If you&rsquo;re not sure, open it in a text editor and see if it has both &ldquo;vn&rdquo; and &ldquo;vt&rdquo; entries).</p>
+
+<p>But if you&rsquo;re playing by the book, install (if you haven&rsquo;t already) and open up Blender. You should see an interface like this:</p>
+
+<p><img src="/images/bcgiaw/blender.png" alt="" /></p>
+
+<p>At first it may look a little overwhelming. Don&rsquo;t worry, we won&rsquo;t dwell too much on it. Click anywhere on the interface and you should see a cube like this:</p>
+
+<p><img src="/images/bcgiaw/blender-cube.png" alt="" /></p>
+
+<p>Press Delete to erase this cube from existence. We all know that spheres &gt; cubes. Then with Shift+A you should see a tiny menu with many options. Go to Mesh -&gt; UV sphere and click that. You&rsquo;ll see that a sphere made of polygons shows up on the screen.</p>
+
+<p><img src="/images/bcgiaw/blender-sphere.png" alt="" /></p>
+
+<p>Don&rsquo;t worry if that isn&rsquo;t smooth enough. Remember the Phong shading? We&rsquo;ll do that later when we render it. Now to export this sphere as an .obj, go to File (on the top of the screen) -&gt; Export -&gt; Wavefront (.obj) and you should see a menu like this on the corner. Make sure that your options are set just like these:</p>
+
+<p><img src="/images/bcgiaw/blender-export.png" alt="" /></p>
+
+<p>The majority of those are self-explanatory. &ldquo;Triangulate faces&rdquo; is because our .obj importer will only read triangular faces to keep it simple. Don&rsquo;t forget to write UVs and write normals too. The rest is up to you.</p>
+
+<p>Now, export it into a file in your project (I use a res/ directory for that) and it&rsquo;s time to write code! In order to keep things organized, we make new <code>object.hpp</code> and <code>object.cpp</code> files. This is my <code>object.hpp</code></p>
+
+<pre><code class="language-cpp">#pragma once
+
+#include &lt;vector&gt;
+#include &lt;string&gt;
+#include &lt;glad/glad.h&gt;
+
+class Object
+{
+    std::vector&lt;float&gt; vertices;
+    std::vector&lt;uint&gt; faces;
+    std::vector&lt;float&gt; normals;
+    std::vector&lt;float&gt; uvs;
+
+    GLuint vbo;
+    GLuint ibo;
+    GLuint normal_bo;
+    GLuint uv_bo;
+    GLuint texture;
+
+    float specular;
+
+public:
+    Object(const std::string&amp; filename, const std::string&amp; texfilename, float specular);
+};
+</code></pre>
+
+<p>Remember: all the GLint&rsquo;s and GLuint&rsquo;s in our code are actually pointers! Yes, pointers to GPU data. This is how OpenGL communicates with the graphics memory, and this is what we&rsquo;ll use to put our data in there before it&rsquo;s rendered, which are all the -bo function members. Also, as you can see, we have a specular parameter, which is the <strong>ks</strong> we talked about in day four. If you paid attention to day four, you should remember our Phong rendering equation, which is what we&rsquo;re going to simulate in our shader. Now we need to process the .obj file: get all the vertices from the <strong>v</strong> entries, face indices from <strong>f</strong>, vertex normals from <strong>vn</strong> and texture coordinates from <strong>vt</strong>. If you&rsquo;re familiar with handling input in C++, this code from the <code>object.cpp</code> should be familiar to you (don&rsquo;t forget to add <code>object.o</code> to the makefile!). And, we&rsquo;ll get to the <code>texfilename</code> parameter later on.</p>
+
+<pre><code class="language-cpp">#include &quot;object.hpp&quot;
+#include &lt;fstream&gt;
+#include &lt;sstream&gt;
+#include &lt;iterator&gt;
+#include &lt;iostream&gt;
+
+Object::Object(const std::string&amp; filename, const std::string&amp; texfilename, float specular): specular(specular)
+{
+    std::ifstream file;
+    file.open(filename, std::ifstream::in);
+
+    std::string line;
+    while(file.good())
+    {
+        std::getline(file, line);
+        std::istringstream iss(line);
+        std::string key;
+        iss&gt;&gt;key&gt;&gt;std::ws;
+
+        if(key == &quot;v&quot;)
+        {
+            float x, y, z;
+            iss&gt;&gt;x&gt;&gt;y&gt;&gt;z;
+            vertices.push_back(x);
+            vertices.push_back(y);
+            vertices.push_back(z);
+        }
+        else if(key == &quot;vn&quot;)
+        {
+            float x, y, z;
+            iss&gt;&gt;x&gt;&gt;y&gt;&gt;z;
+            normals.push_back(x);
+            normals.push_back(y);
+            normals.push_back(z);
+        }
+        else if(key == &quot;vt&quot;)
+        {
+            float u, v;
+            iss&gt;&gt;u&gt;&gt;v;
+            uvs.push_back(u);
+            uvs.push_back(v);
+        }
+        else if(key == &quot;f&quot;)
+        {
+            uint v, t, n;
+            while(!iss.eof())
+            {
+                iss&gt;&gt;v&gt;&gt;std::ws;
+                faces.push_back(v);
+                if(iss.peek() == '/')
+                {
+                    iss.get();
+                    if(iss.peek() == '/')
+                    {
+                        iss.get();
+                        iss&gt;&gt;n&gt;&gt;std::ws;
+                    }
+                    else
+                    {
+                        iss&gt;&gt;t&gt;&gt;std::ws;
+                        if(iss.peek() == '/')
+                        {
+                            iss.get();
+                            iss&gt;&gt;n&gt;&gt;std::ws;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    file.close();
+}
+</code></pre>
+
+<p>What this is basically doing is getting the file content line by line and using <code>std::istringstream</code> to split the line in separate components and getting then one by one. When we get to the face data, it gets a little trickier, but we just discard the Uv indices and normal indices which are data we don&rsquo;t need for this case. At the end, all the data for our vectors will be parsed and properly in the memory.</p>
+
+<p><strong>Note: this is a very simple OBJ parser and this is not the most efficient way to do it, but for this tutorial it&rsquo;ll be enough.</strong></p>
+
+<p>Now we initialize the data in the GPU to be drawn. Our vertex array object (VAO) is where all this data will be alocated, so we must set it up first. This is done by calling these OpenGL functions: <code>glGenVertexArrays</code>, which needs a number (of the arrays to be generated) and a reference to a GLuint (which is a pointer in GPU memory, don&rsquo;t forget!), and <code>glBindVertexArray</code> (which changes the internal state of the OpenGL API to use this vertex array object specifically). So, we should put this in our constructor after reading the .obj file (and closing it):</p>
+
+<pre><code class="language-cpp">    glGenVertexArrays(1, &amp;vao);
+    glBindVertexArray(vao);
+</code></pre>
+
+<p>After that, here&rsquo;s where we&rsquo;ll actually get our data ready to be sent to the GPU. Each other GLuint we declared will be a pointer to the data we just read, so we have to:</p>
+
+<ul>
+<li><p>generate those buffers in the GPU;</p></li>
+
+<li><p>switch the internal state of the current VAO to use this VBO we&rsquo;re dealing with;</p></li>
+
+<li><p>put the data on it;</p></li>
+
+<li><p>do that for all four buffers we have.</p></li>
+</ul>
+
+<p>Remember! The OpenGL we&rsquo;re using is originally a C API. It doesn&rsquo;t know about C++ types, so, to pass in the data we have in the vectors we need to use the <code>.data()</code> function from <code>std::vector</code>. This is how it looks like:</p>
+
+<pre><code class="language-cpp">    glGenBuffers(1, &amp;vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size(), vertices.data(), GL_STATIC_DRAW);
+
+    glGenBuffers(1, &amp;ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glBufferData(GL_ARRAY_BUFFER, faces.size(), faces.data(), GL_STATIC_DRAW);
+
+    glGenBuffers(1, &amp;normal_bo);
+    glBindBuffer(GL_ARRAY_BUFFER, normal_bo);
+    glBufferData(GL_ARRAY_BUFFER, normals.size(), normals.data(), GL_STATIC_DRAW);
+
+    glGenBuffers(1, &amp;uv_bo);
+    glBindBuffer(GL_ARRAY_BUFFER, uv_bo);
+    glBufferData(GL_ARRAY_BUFFER, uvs.size(), uvs.data(), GL_STATIC_DRAW);
+
+    glBindVertexArray(0);
+</code></pre>
+
+<p>Notice that we must specify what will the GPU use the data for in the first parameter of <code>glBindBuffer()</code>. Also, binding a NULL address to the VAO state at the end is a good practice, so that it doesn&rsquo;t pollute the OpenGL state and make it more prone to errors. With that all set, our constructor is ready.</p>
+
+<p>If you&rsquo;re an experienced C++ programmer (don&rsquo;t even need to be that much to be honest) you should have noticed that there&rsquo;s a huge problem in what we&rsquo;re currently doing. All that memory isn&rsquo;t being freed after the program ends! And of course, OpenGL has functions to handle that as well, which we&rsquo;ll put in our <strong>destructor</strong>:</p>
+
+<pre><code class="language-cpp">Object::~Object()
+{
+    glDeleteBuffers(1, &amp;vbo);
+    glDeleteBuffers(1, &amp;ibo);
+    glDeleteBuffers(1, &amp;normal_bo);
+    glDeleteBuffers(1, &amp;uv_bo);
+    glDeleteVertexArrays(1, &amp;vao);
+}
+</code></pre>
+
+<p>With that all set, our Object class is almost ready. The GPU has all the data it needs. But what do you need besides data? You need to know what do to with this data. In other words, you need a program, for the GPU specifically. And that is what we call <strong>shaders</strong>, which we will see in part 2.</p>
+
+<p><a href="/post/day_one_introduction_basic_computer_graphics_in_a_week/">Day one - introduction</a></p>
+
+<p><a href="/post/day_two_transforms_basic_computer_graphics_in_a_week/">Day two - transforms</a></p>
+
+<p><a href="/post/day_three_modelling_basic_computer_graphics_in_a_week/">Day three - modelling</a></p>
+
+<p><a href="/post/day_four_local_illumination_and_materials/">Day four - local illumination and materials</a></p>
+
+<p><a href="/post/interlude_bits_of_opengl">Interlude - Bits of OpenGL, part 1</a></p>
+</div>
+                    <br />
+                    <br />
+                    <div class="less">Page link: <a href="/post/interlude_bits_of_opengl/" class="pagelink">/post/interlude_bits_of_opengl/</a></div>
+                    <div class="line-dotted"></div>
+                <article>
+            </div>
+            <footer>
+    <div>
+    
+        &#xA9; 2019 by guangmean. All Rights Reserved.
+    
+    </div>
+</footer>
+
+        </div>
+        <div class="ads">
+    
+    
+</div>
+
+    </div>
+
+
+  <script src="/js/vendor/modernizr-3.6.0.min.js"></script>
+<script src="/js/vendor/jquery-3.3.1.min.js"></script>
+<script>window.jQuery || document.write('<script src="\/js/vendor/jquery-3.3.1.min.js"><\/script>')</script>
+<script src="/js/plugins.js"></script>
+<script src="/js/main.js"></script>  
+
+<script src="/js/vendor/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad();</script>
+                                                       
+
+<script>                                             
+    window.ga = function () { ga.q.push(arguments) }; ga.q = []; ga.l = +new Date;
+ga('create', 'UA-******', 'auto'); ga('send', 'pageview')
+</script>                                            
+<script src="//www.google-analytics.com/analytics.js" async defer></script>
+
+
+</body>
+</html>

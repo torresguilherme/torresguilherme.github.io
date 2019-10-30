@@ -68,9 +68,11 @@
                 <article>
                     <h3>Day four: local illumination and materials (Basic Computer Graphics in a Week)</h3>
                     <div class="less">
-                        <time>Published: Friday, Aug 30, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;17 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 3618 words
+                        <time>Published: Friday, Aug 30, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;18 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 3661 words
                     </div>
                     <div class="em">
+
+<p><em>EDIT: some corrections in this article were contributions from criver from the Graphics Programming Discord community. Not every color is a Fourier transform, and I wrote &ldquo;Phong&rsquo;s rendering equation&rdquo; instead of &ldquo;Phong&rsquo;s lighting model&rdquo;</em></p>
 
 <h3 id="this-is-the-hardest-most-complex-post-of-this-series-bonus-points-if-you-understand-everything">This is the hardest, most complex post of this series. Bonus points if you understand everything.</h3>
 
@@ -167,7 +169,7 @@ Out of this large pool of attempts to emulate how light works and how it interac
 
 <p>It&rsquo;s about exploring the limitations of human vision in the end. The human visual system is highly complex and non-linear, but it&rsquo;s far from perfect. We can see colors, unlike lots of animals, but still, we can exploit the wave form of the colors to generate a new color whose frequency is not really being emitted by the source of light, or even to generate new colors (ever heard that <a href="https://www.youtube.com/watch?v=S9dqJRyk0YM">the pink color is actually not real</a>?)</p>
 
-<p>Every color can be defined as a Fourier transform. That means it&rsquo;s a sum of different wave-like equations, that is, equations that involve <strong>sin</strong>, <strong>cos</strong> and functions like that. Or being more mathematically rigorous, a Fourier transform is something like this, in its sine-cosine form:</p>
+<p>Some colors can be defined as a Fourier transforms. That means it&rsquo;s a sum of different wave-like equations, that is, equations that involve <strong>sin</strong>, <strong>cos</strong> and functions like that. Or being more mathematically rigorous, a Fourier transform is something like this, in its sine-cosine form:</p>
 
 <p><img src="/images/bcgiaw/fourier.gif" alt="" /></p>
 
@@ -235,7 +237,7 @@ Out of this large pool of attempts to emulate how light works and how it interac
 
 <p><em>BSDFs can also be used to simulate skin and hair. This is a Touhou Project animation from the artist minusT, made in Blender, and can be seen on <a href="https://www.youtube.com/watch?v=PWeH_CcTq_8">Youtube</a></em></p>
 
-<h3 id="phong-s-lighting-equation">Phong&rsquo;s lighting equation</h3>
+<h3 id="phong-s-lighting-model">Phong&rsquo;s lighting model</h3>
 
 <p><img src="/images/bcgiaw/diffuse_suzanne.png" alt="" /> <img src="/images/bcgiaw/specular_suzanne.png" alt="" /> <img src="/images/bcgiaw/ambient_suzanne.png" alt="" /> <img src="/images/bcgiaw/phong_suzanne.png" alt="" /></p>
 
@@ -247,7 +249,7 @@ Out of this large pool of attempts to emulate how light works and how it interac
 
 <p><img src="/images/bcgiaw/specularcomponent.gif" alt="" /></p>
 
-<p>Summing up everything, we have our output color, and this is what we call the <strong>Phong&rsquo;s rendering equation</strong>:</p>
+<p>Summing up everything, we have our output color, and this is what we call the <strong>Phong&rsquo;s lighting model</strong>:</p>
 
 <p><img src="/images/bcgiaw/phongequation.gif" alt="" /></p>
 
@@ -325,7 +327,9 @@ Out of this large pool of attempts to emulate how light works and how it interac
 
 <p><a href="/post/day_three_modelling_basic_computer_graphics_in_a_week/">Day three - modelling</a></p>
 
-<p><a href="/post/interlude_bits_of_opengl">Interlude - Bits of OpenGL</a></p>
+<p><a href="/post/day_four_local_illumination_and_materials/">Day four - local illumination and materials</a></p>
+
+<p><a href="/post/interlude_bits_of_opengl">Interlude - Bits of OpenGL, part 1</a></p>
 </div>
                     <br />
                     <br />
