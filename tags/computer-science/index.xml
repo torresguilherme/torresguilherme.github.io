@@ -17,7 +17,8 @@
       <pubDate>Wed, 30 Oct 2019 13:05:29 -0300</pubDate>
       
       <guid>http://example.github.io/post/interlude_bits_of_opengl/</guid>
-      <description>This is an optional read for BCGIAW. We met our transforms in day two, knew our 3D models in day three and integrated like mad men in day four. How about we put that into practice a little? It&amp;rsquo;s been some time since I last posted here and it&amp;rsquo;ll be some time until the next post comes out, too. These weeks are being pretty busy as the CVPR deadline approaches.</description>
+      <description>EDIT 31/10/2019: thanks to @deccer for spotting some mistakes and design flaws on this post, they&amp;rsquo;re now fixed.
+This is an optional read for BCGIAW. We met our transforms in day two, knew our 3D models in day three and integrated like mad men in day four. How about we put that into practice a little? It&amp;rsquo;s been some time since I last posted here and it&amp;rsquo;ll be some time until the next post comes out, too.</description>
     </item>
     
     <item>

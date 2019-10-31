@@ -68,9 +68,11 @@
                 <article>
                     <h3>Interlude: Bits of OpenGL, part 1 (Basic Computer Graphics in a week)</h3>
                     <div class="less">
-                        <time>Published: Wednesday, Oct 30, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;16 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 3266 words
+                        <time>Published: Wednesday, Oct 30, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;16 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 3284 words
                     </div>
                     <div class="em">
+
+<p><em>EDIT 31/10/2019: thanks to @deccer for spotting some mistakes and design flaws on this post, they&rsquo;re now fixed.</em></p>
 
 <h3 id="this-is-an-optional-read-for-bcgiaw-we-met-our-transforms-in-day-two-knew-our-3d-models-in-day-three-and-integrated-like-mad-men-in-day-four-how-about-we-put-that-into-practice-a-little">This is an optional read for BCGIAW. We met our transforms in day two, knew our 3D models in day three and integrated like mad men in day four. How about we put that into practice a little?</h3>
 
@@ -333,7 +335,7 @@ public:
 };
 </code></pre>
 
-<p>Remember: all the GLint&rsquo;s and GLuint&rsquo;s in our code are actually pointers! Yes, pointers to GPU data. This is how OpenGL communicates with the graphics memory, and this is what we&rsquo;ll use to put our data in there before it&rsquo;s rendered, which are all the -bo function members. Also, as you can see, we have a specular parameter, which is the <strong>ks</strong> we talked about in day four. If you paid attention to day four, you should remember our Phong rendering equation, which is what we&rsquo;re going to simulate in our shader. Now we need to process the .obj file: get all the vertices from the <strong>v</strong> entries, face indices from <strong>f</strong>, vertex normals from <strong>vn</strong> and texture coordinates from <strong>vt</strong>. If you&rsquo;re familiar with handling input in C++, this code from the <code>object.cpp</code> should be familiar to you (don&rsquo;t forget to add <code>object.o</code> to the makefile!). And, we&rsquo;ll get to the <code>texfilename</code> parameter later on.</p>
+<p>Remember: all the GLint&rsquo;s and GLuint&rsquo;s in our code are actually pointers! Yes, pointers to GPU data. This is how OpenGL communicates with the graphics memory, and this is what we&rsquo;ll use to put our data in there before it&rsquo;s rendered, which are all the -bo function members. Also, as you can see, we have a specular parameter, which is the <strong>ks</strong> we talked about in day four. If you paid attention to day four, you should remember our Phong lighting equation, which is what we&rsquo;re going to simulate in our shader. Now we need to process the .obj file: get all the vertices from the <strong>v</strong> entries, face indices from <strong>f</strong>, vertex normals from <strong>vn</strong> and texture coordinates from <strong>vt</strong>. If you&rsquo;re familiar with handling input in C++, this code from the <code>object.cpp</code> should be familiar to you (don&rsquo;t forget to add <code>object.o</code> to the makefile!). And, we&rsquo;ll get to the <code>texfilename</code> parameter later on.</p>
 
 <pre><code class="language-cpp">#include &quot;object.hpp&quot;
 #include &lt;fstream&gt;
