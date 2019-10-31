@@ -440,7 +440,7 @@ Object::Object(const std::string&amp; filename, const std::string&amp; texfilena
 
     glGenBuffers(1, &amp;ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ARRAY_BUFFER, faces.size(), faces.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, faces.size(), faces.data(), GL_STATIC_DRAW);
 
     glGenBuffers(1, &amp;normal_bo);
     glBindBuffer(GL_ARRAY_BUFFER, normal_bo);
