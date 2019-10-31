@@ -68,7 +68,7 @@
                 <article>
                     <h3>Interlude: Bits of OpenGL, part 1 (Basic Computer Graphics in a week)</h3>
                     <div class="less">
-                        <time>Published: Wednesday, Oct 30, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;16 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 3265 words
+                        <time>Published: Wednesday, Oct 30, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;16 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 3266 words
                     </div>
                     <div class="em">
 
@@ -172,8 +172,8 @@ int main()
     // render loop
     while(!glfwWindowShouldClose(window))
     {
-        glfwSwapBuffers(window);
-        glfwPollEvents();    
+        glfwPollEvents();
+        glfwSwapBuffers(window);    
     }
 
     glfwTerminate();
@@ -194,6 +194,7 @@ int main()
 <pre><code class="language-cpp">    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout&lt;&lt;&quot;Failed to initialize GLAD\n&quot;;
+        glfwTerminate();
         return -1;
     }
 </code></pre>
@@ -257,9 +258,9 @@ void render();
 
 void render()
 {
-    auto translate = glm::mat4();
-    auto rotation = glm::mat4();
-    auto scale = glm::mat4();
+    auto translate = glm::identity&lt;glm::mat4&gt;();
+    auto rotation = glm::identity&lt;glm::mat4&gt;();
+    auto scale = glm::identity&lt;glm::mat4&gt;();
 
     auto model_mat = translate * scale * rotation;
 
@@ -269,7 +270,7 @@ void render()
         glm::vec3(0.0, 1.0, 0.0)
     );
 
-    auto projection_mat = glm::perspective&lt;float&gt;(45.0, 16.0/9.0, 0.001, 1000);
+    auto projection_mat = glm::perspective&lt;float&gt;(45.0, 16.0/9.0, 0.1, 1000);
 
     auto transform = projection_mat * view_mat * model_mat;
 </code></pre>
