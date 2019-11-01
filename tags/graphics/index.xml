@@ -6,20 +6,10 @@
     <description>Recent content in graphics on guilherme torres</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 30 Oct 2019 19:13:02 -0300</lastBuildDate>
+    <lastBuildDate>Wed, 30 Oct 2019 13:05:29 -0300</lastBuildDate>
     
 	<atom:link href="http://example.github.io/tags/graphics/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>Interlude Bits of Opengl, part 2 (Basic Computer Graphics in a week)</title>
-      <link>http://example.github.io/post/interlude-bits-of-opengl-part-2/</link>
-      <pubDate>Wed, 30 Oct 2019 19:13:02 -0300</pubDate>
-      
-      <guid>http://example.github.io/post/interlude-bits-of-opengl-part-2/</guid>
-      <description>This is an optional read for BCGIAW. In the first part, we did lots of things that may or may not have made sense. But now, time to actually see something on the screen! And isn&amp;rsquo;t that fun?
-Let&amp;rsquo;s pick up where we left off. Last time we did put something in the GPU memory, but we have no way of actually showing the data we&amp;rsquo;ve imported in our program.</description>
-    </item>
     
     <item>
       <title>Interlude: Bits of OpenGL, part 1 (Basic Computer Graphics in a week)</title>

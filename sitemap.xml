@@ -16,60 +16,55 @@
   
   <url>
     <loc>http://example.github.io/categories/</loc>
-    <lastmod>2019-10-30T19:13:02-03:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.github.io/post/interlude-bits-of-opengl-part-2/</loc>
-    <lastmod>2019-10-30T19:13:02-03:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://example.github.io/post/</loc>
-    <lastmod>2019-10-30T19:13:02-03:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.github.io/tags/</loc>
-    <lastmod>2019-10-30T19:13:02-03:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.github.io/tags/basic-cg-in-a-week/</loc>
-    <lastmod>2019-10-30T19:13:02-03:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.github.io/tags/computer-science/</loc>
-    <lastmod>2019-10-30T19:13:02-03:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.github.io/categories/en-us/</loc>
-    <lastmod>2019-10-30T19:13:02-03:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.github.io/tags/graphics/</loc>
-    <lastmod>2019-10-30T19:13:02-03:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.github.io/</loc>
-    <lastmod>2019-10-30T19:13:02-03:00</lastmod>
+    <lastmod>2019-10-30T13:05:29-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://example.github.io/post/interlude_bits_of_opengl/</loc>
     <lastmod>2019-10-30T13:05:29-03:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/post/</loc>
+    <lastmod>2019-10-30T13:05:29-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/tags/</loc>
+    <lastmod>2019-10-30T13:05:29-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/tags/basic-cg-in-a-week/</loc>
+    <lastmod>2019-10-30T13:05:29-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/tags/computer-science/</loc>
+    <lastmod>2019-10-30T13:05:29-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/categories/en-us/</loc>
+    <lastmod>2019-10-30T13:05:29-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/tags/graphics/</loc>
+    <lastmod>2019-10-30T13:05:29-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.github.io/</loc>
+    <lastmod>2019-10-30T13:05:29-03:00</lastmod>
+    <priority>0</priority>
   </url>
   
   <url>
