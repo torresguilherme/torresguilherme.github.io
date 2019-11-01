@@ -68,7 +68,7 @@
                 <article>
                     <h3>Interlude: Bits of OpenGL, part 1 (Basic Computer Graphics in a week)</h3>
                     <div class="less">
-                        <time>Published: Wednesday, Oct 30, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;16 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 3284 words
+                        <time>Published: Wednesday, Oct 30, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;16 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 3364 words
                     </div>
                     <div class="em">
 
@@ -320,7 +320,9 @@ class Object
     std::vector&lt;float&gt; vertices;
     std::vector&lt;uint&gt; faces;
     std::vector&lt;float&gt; normals;
+    std::vector&lt;uint&gt; normal_indices;
     std::vector&lt;float&gt; uvs;
+    std::vector&lt;uint&gt; uv_indices;
 
     GLuint vbo;
     GLuint ibo;
@@ -335,7 +337,7 @@ public:
 };
 </code></pre>
 
-<p>Remember: all the GLint&rsquo;s and GLuint&rsquo;s in our code are actually pointers! Yes, pointers to GPU data. This is how OpenGL communicates with the graphics memory, and this is what we&rsquo;ll use to put our data in there before it&rsquo;s rendered, which are all the -bo function members. Also, as you can see, we have a specular parameter, which is the <strong>ks</strong> we talked about in day four. If you paid attention to day four, you should remember our Phong lighting equation, which is what we&rsquo;re going to simulate in our shader. Now we need to process the .obj file: get all the vertices from the <strong>v</strong> entries, face indices from <strong>f</strong>, vertex normals from <strong>vn</strong> and texture coordinates from <strong>vt</strong>. If you&rsquo;re familiar with handling input in C++, this code from the <code>object.cpp</code> should be familiar to you (don&rsquo;t forget to add <code>object.o</code> to the makefile!). And, we&rsquo;ll get to the <code>texfilename</code> parameter later on.</p>
+<p>Remember: all the GLint&rsquo;s and GLuint&rsquo;s in our code are actually pointers! Yes, pointers to GPU data. This is how OpenGL communicates with the graphics memory, and this is what we&rsquo;ll use to put our data in there before it&rsquo;s rendered, which are all the -bo function members. Also, as you can see, we have a specular parameter, which is the <strong>ks</strong> we talked about in day four. If you paid attention to day four, you should remember our Phong lighting equation, which is what we&rsquo;re going to simulate in our shader. Now we need to process the .obj file: get all the vertices from the <strong>v</strong> entries, indices from <strong>f</strong>, vertex normals from <strong>vn</strong> and texture coordinates from <strong>vt</strong>. If you&rsquo;re familiar with handling input in C++, this code from the <code>object.cpp</code> should be familiar to you (don&rsquo;t forget to add <code>object.o</code> to the makefile!). And, we&rsquo;ll get to the <code>texfilename</code> parameter later on.</p>
 
 <pre><code class="language-cpp">#include &quot;object.hpp&quot;
 #include &lt;fstream&gt;
@@ -348,11 +350,14 @@ Object::Object(const std::string&amp; filename, const std::string&amp; texfilena
     std::ifstream file;
     file.open(filename, std::ifstream::in);
 
+    std::vector&lt;float&gt; normals_tmp;
+    std::vector&lt;float&gt; uvs_tmp;
+
     std::string line;
     while(file.good())
     {
-        std::getline(file, line);
         std::istringstream iss(line);
+        std::getline(file, line);
         std::string key;
         iss&gt;&gt;key&gt;&gt;std::ws;
 
@@ -368,16 +373,16 @@ Object::Object(const std::string&amp; filename, const std::string&amp; texfilena
         {
             float x, y, z;
             iss&gt;&gt;x&gt;&gt;y&gt;&gt;z;
-            normals.push_back(x);
-            normals.push_back(y);
-            normals.push_back(z);
+            normals_tmp.push_back(x);
+            normals_tmp.push_back(y);
+            normals_tmp.push_back(z);
         }
         else if(key == &quot;vt&quot;)
         {
             float u, v;
             iss&gt;&gt;u&gt;&gt;v;
-            uvs.push_back(u);
-            uvs.push_back(v);
+            uvs_tmp.push_back(u);
+            uvs_tmp.push_back(v);
         }
         else if(key == &quot;f&quot;)
         {
@@ -385,7 +390,7 @@ Object::Object(const std::string&amp; filename, const std::string&amp; texfilena
             while(!iss.eof())
             {
                 iss&gt;&gt;v&gt;&gt;std::ws;
-                faces.push_back(v);
+                faces.push_back(v-1);
                 if(iss.peek() == '/')
                 {
                     iss.get();
@@ -393,14 +398,17 @@ Object::Object(const std::string&amp; filename, const std::string&amp; texfilena
                     {
                         iss.get();
                         iss&gt;&gt;n&gt;&gt;std::ws;
+                        normal_indices.push_back(n-1);
                     }
                     else
                     {
                         iss&gt;&gt;t&gt;&gt;std::ws;
+                        uv_indices.push_back(t-1);
                         if(iss.peek() == '/')
                         {
                             iss.get();
                             iss&gt;&gt;n&gt;&gt;std::ws;
+                            normal_indices.push_back(n-1);
                         }
                     }
                 }
@@ -409,10 +417,23 @@ Object::Object(const std::string&amp; filename, const std::string&amp; texfilena
     }
 
     file.close();
+
+    normals.resize(normals_tmp.size());
+    uvs.resize(uvs_tmp.size());
+    for(uint i = 0; i &lt; faces.size(); i++)
+    {
+        normals[3*faces[i]] = normals_tmp[3*normal_indices[i]];
+        normals[3*faces[i]+1] = normals_tmp[3*normal_indices[i]+1];
+        normals[3*faces[i]+2] = normals_tmp[3*normal_indices[i]+2];
+        uvs[2*faces[i]] = uvs_tmp[2*uv_indices[i]];
+        uvs[2*faces[i]+1] = uvs_tmp[2*uv_indices[i]+1];
+    }
 }
 </code></pre>
 
 <p>What this is basically doing is getting the file content line by line and using <code>std::istringstream</code> to split the line in separate components and getting then one by one. When we get to the face data, it gets a little trickier, but we just discard the Uv indices and normal indices which are data we don&rsquo;t need for this case. At the end, all the data for our vectors will be parsed and properly in the memory.</p>
+
+<p>In the end we swap the temporary normals and uvs with their actual vectors, because the normals in .objs don&rsquo;t come in the same order as the vertices, neither do the UV&rsquo;s. So we need to put them aligned with the vertices manually.</p>
 
 <p><strong>Note: this is a very simple OBJ parser and this is not the most efficient way to do it, but for this tutorial it&rsquo;ll be enough.</strong></p>
 

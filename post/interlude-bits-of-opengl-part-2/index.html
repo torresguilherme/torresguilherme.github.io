@@ -1,0 +1,485 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1">
+    <title>Interlude Bits of Opengl, part 2 (Basic Computer Graphics in a week) - guilherme torres</title>
+
+    
+    <meta name="keywords" content="">
+    <meta name="description" content="This is an optional read for BCGIAW. In the first part, we did lots of things that may or may not have made sense. But now, time to actually see something on the screen!">
+    <meta property="og:image", content=/images/bcgiaw/interlude-part-1.png>
+    
+    <link rel="stylesheet" href="/css/highlight.min.css">
+    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href="/css/diello.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-******",
+            enable_page_level_ads: true
+        });
+    </script>
+    
+    
+</head>
+
+
+<body>
+    <!--[if lte IE 9]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+    <![endif]-->
+
+  
+    <div class="flex-column">
+        <div class="ads">
+    
+    
+</div>
+
+        <div class="home">
+            <div class="logo">
+                <h1><a href="/">guilherme torres</a></h1>
+            </div>
+            <div class="navigation">
+    
+        
+        
+        
+        <a href="/" class="">home</a>
+        
+        <a href="/contact/" class="">yes, please bother me</a>
+        
+        <a href="/about/" class="">literally who??</a>
+        
+        <a href="/art/" class="">my arts and crafts</a>
+        
+        
+        <a href="javascript:void(0);" class="current">ARTICLE</a>
+        
+    
+</div>
+
+            <div>
+                <article>
+                    <h3>Interlude Bits of Opengl, part 2 (Basic Computer Graphics in a week)</h3>
+                    <div class="less">
+                        <time>Published: Wednesday, Oct 30, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;13 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 2589 words
+                    </div>
+                    <div class="em">
+
+<h3 id="this-is-an-optional-read-for-bcgiaw-in-the-first-part-we-did-lots-of-things-that-may-or-may-not-have-made-sense-but-now-time-to-actually-see-something-on-the-screen">This is an optional read for BCGIAW. In the first part, we did lots of things that may or may not have made sense. But now, time to actually see something on the screen!</h3>
+
+<p>And isn&rsquo;t that fun?</p>
+
+<p>Let&rsquo;s pick up where we left off. Last time we did put something in the GPU memory, but we have no way of actually showing the data we&rsquo;ve imported in our program. That because having the data is not enough, we nned to know <strong>what to do</strong> with that data. In other words, we need a program for the GPU. And that&rsquo;s what we call a <strong>shader</strong>.</p>
+
+<p><strong>A shader is nothing more than a little program that runs inside of the GPU and is massively parallel</strong>. Ok, it&rsquo;s not always that little. Some shaders can get pretty huge, but you have to watch out for that: you don&rsquo;t to force your GPU to drop FPS to make crazy calculations in runtime. A pretty heavy shader example that I made is <a href="https://github.com/torresguilherme/spherical-harmonics-demo/blob/master/fragment_shader.glsl">this one</a> (it does a Monte Carlo integration on runtime to render an object with precomputed radiance transfer. Don&rsquo;t worry if you have no idea what I just said, what we&rsquo;re about to do is a lot simpler).</p>
+
+<p>Shaders were originally made for the purpose of graphics programming, but now there are also <strong>compute shaders</strong>, which only make calculations on buffers (they&rsquo;re used for particles and terrain programming for example). We won&rsquo;t see those right now, as all that we need to render this sphere is a <strong>vertex shader</strong> and a <strong>fragment shader</strong>.</p>
+
+<h2 id="reading-shaders">Reading shaders</h2>
+
+<p>This is the not-so-fun part, but this is due to a reason. We could just read the shaders naively and let the program crash if something goes wrong, but we&rsquo;re not going to do that because we&rsquo;re not like those lazy and non-creative programmers who rely on the OS safety measures to have their asses. Here we&rsquo;ll handle errors. We&rsquo;ll pretend we&rsquo;re programming on Temple OS. Especially in a field like computer graphics, where things are so tricky to debug and if you get a pitch black screen on OpenGL it might be due to many different reasons, this is very important.</p>
+
+<p>Our shading reading process will consist of three functions:</p>
+
+<pre><code class="language-cpp">GLint compile_shader(const std::string&amp; vertex, const std::string&amp; fragment);
+std::string load_shader_string(const std::string&amp; filename);
+GLint check_shader_error(GLuint shader, GLuint flag, bool is_program);
+</code></pre>
+
+<p>Put their signatures somewhere were your <code>main()</code> can find them. First we&rsquo;ll take a look at the <code>load_shader_string</code> as it&rsquo;s the simplest function here:</p>
+
+<pre><code class="language-cpp">std::string load_shader_string(const std::string&amp; filename)
+{
+	std::ifstream file;
+	file.open((filename).c_str());
+
+	std::string output;
+	std::string line;
+
+	if(file.is_open())
+	{
+		while(file.good())
+		{
+			std::getline(file, line);
+			output.append(line + &quot;\n&quot;);
+		}
+	}
+
+	return output;
+}
+</code></pre>
+
+<p>What this is doing is something you should have seen before as a C++ programmer: it reads a text file and stores all of its text into a string, line by line. That&rsquo;s all. I won&rsquo;t go in depth in this function but know that we&rsquo;ll need to retrieve our shaders as strings, and that&rsquo;s important.</p>
+
+<p>Next is the <code>check_shader_error</code> function:</p>
+
+<pre><code class="language-cpp">GLint check_shader_error(GLuint shader, GLuint flag, bool is_program)
+{
+	GLint success = 0;
+	GLchar error[1024] = {0};
+
+	if(is_program)
+		glGetProgramiv(shader, flag, &amp;success);
+	else
+		glGetShaderiv(shader, flag, &amp;success);
+
+	if(success == GL_FALSE)
+	{
+		if(is_program)
+			glGetProgramInfoLog(shader, sizeof(error), NULL, error);
+		else
+			glGetShaderInfoLog(shader, sizeof(error), NULL, error);
+
+		std::cerr&lt;&lt;error&lt;&lt;std::endl;
+	}
+
+    return success;
+}
+</code></pre>
+
+<p>Someone who knows about good programming practices would probably yell at me right now. A function with two responsibilities and a flag indicating what it should do? Sounds like nonsense, right? Well yes, and in an actual commercial program I&rsquo;d do it differently, but right now I just wanna keep the functionality of reading the shaders in a few functions so that we can be done with this quickly. Same thing goes for the next function we&rsquo;re going to see here, it&rsquo;s a pretty huge one.</p>
+
+<p>Anyway, what this function does is call the <code>glGetProgramiv</code> or <code>glGetShaderiv</code> function to see if it was compiled with success. If not, it reads the log and displays an error at the terminal. Finally, it will return if the process was successful or not to the last function on the stack.</p>
+
+<p>Now you may ask, what is the difference between a shader and a program? Aren&rsquo;t shaders programs? Well, they are, but <strong>program</strong> is the name that OpenGL gives for a full linked program (with all the different shaders in the pipeline). We can now check for errors in the shaders individually and for the program as a whole.</p>
+
+<p>Now for the last function, and the one which will actually read the shaders, compile them and return a program ready to render stuff. Which is this one (we&rsquo;re still going to fill it):</p>
+
+<pre><code class="language-cpp">GLint compile_shader(const std::string&amp; vertex, const std::string&amp; fragment)
+{
+}
+</code></pre>
+
+<p>Let&rsquo;s do this bit by bit:</p>
+
+<pre><code class="language-cpp">    GLint program = glCreateProgram();
+
+    if(program == 0)
+    {
+        std::cerr&lt;&lt;&quot;Couldn't find a valid address in memory to build the program\n&quot;;
+        return -1;
+    }
+</code></pre>
+
+<p>First we allocate the space for the program in the GPU memory. It&rsquo;s just like we did with the data buffers, remember?</p>
+
+<pre><code class="language-cpp">    std::string vertex_shader_source = load_shader_string(vertex);
+    std::string fragment_shader_source = load_shader_string(fragment);
+
+    auto vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+    auto fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+</code></pre>
+
+<p>Then we load the source from the file and allocate the space for the shaders.</p>
+
+<pre><code class="language-cpp">    const char* char_pointer_source = vertex_shader_source.c_str();
+    int length_pointer = vertex_shader_source.length();
+    glShaderSource(vertex_shader, 1, &amp;char_pointer_source, &amp;length_pointer);
+    glCompileShader(vertex_shader);
+    if(check_shader_error(vertex_shader, GL_COMPILE_STATUS, false))
+    {
+        glAttachShader(program, vertex_shader);
+    }
+    else
+    {
+        std::cerr&lt;&lt;&quot;Couldn't compile vertex shader, aborting\n&quot;;
+        exit(1);
+    }
+</code></pre>
+
+<p>First we handle the vertex shader. The <code>glShaderSource</code> function is used to send the shader string to the memory that&rsquo;s allocated to it and then we compile it. As always, we check for errors in the compilation, but if it&rsquo;s successful, we can attach the shader to the program. We&rsquo;ll do the same with the fragment shader:</p>
+
+<pre><code class="language-cpp">    char_pointer_source = fragment_shader_source.c_str();
+    length_pointer = fragment_shader_source.length();
+    glShaderSource(fragment_shader, 1, &amp;char_pointer_source, &amp;length_pointer);
+    glCompileShader(fragment_shader);
+    if(check_shader_error(fragment_shader, GL_COMPILE_STATUS, false))
+    {
+        glAttachShader(program, fragment_shader);
+    }
+    else
+    {
+        std::cerr&lt;&lt;&quot;Couldn't compile fragment shader, aborting\n&quot;;
+        exit(1);
+    }
+</code></pre>
+
+<p>Finally, we link and validate the program. This is necessary in order to check for errors that may appear when you link the shaders together.</p>
+
+<pre><code class="language-cpp">    glLinkProgram(program);
+    auto success = check_shader_error(program, GL_LINK_STATUS, true);
+    if(!success)
+    {
+        std::cerr&lt;&lt;&quot;Couldn't link program, aborting\n&quot;;
+        exit(1);
+    }
+    glValidateProgram(program);
+    success = check_shader_error(program, GL_VALIDATE_STATUS, true);
+    if(!success)
+    {
+        std::cerr&lt;&lt;&quot;Couldn't validate program, aborting\n&quot;;
+        exit(1);
+    }
+
+    return program;
+</code></pre>
+
+<p>We&rsquo;re ready to read shaders! Now call this function in your <code>main()</code> with the file names as parameters (also create the files, of course, because they&rsquo;re where we write the shader code).</p>
+
+<pre><code class="language-cpp">    auto shader = compile_shader(&quot;src/vertex_shader.glsl&quot;, &quot;src/fragment_shader.glsl&quot;); // shader will receive the full linked program
+    auto sphere = Object(&quot;res/sphere.obj&quot;, &quot;res/bricks.obj&quot;, 0.1); // we're adding the object as well
+
+    // render loop
+    while(!glfwWindowShouldClose(window))
+    {
+        glfwPollEvents();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        render(sphere, shader);
+        glfwSwapBuffers(window);
+    }
+</code></pre>
+
+<h2 id="let-s-actually-program-some-shaders">Let&rsquo;s actually program some shaders!</h2>
+
+<p>Now we&rsquo;ll program a little bit of GLSL, the shading language that the OpenGL API uses. Shaders are massively parallel as I said before, and they once for each kind of component of the object that&rsquo;s being rendered. For example:</p>
+
+<ul>
+<li><p>Vertex shaders are executed for each vertex of the object. Their main goals are to apply the transform matrix to all of them, but you can do whatever you please with the vertex, including shifting them, assigning a color to each of them, or animating them.</p></li>
+
+<li><p>Fragment shaders run once for each fragment that&rsquo;s being drawn. You can think of &ldquo;fragment&rdquo; as every point that will be drawn on the screen. Their main goal is to assign a color to each one of these fragments, but just like the fragment shaders, you can perform calculations within them, load the albedo from an external file (remember textures from day 3), as long as you assign the color (otherwise the shader will be useless in the end).</p></li>
+</ul>
+
+<h3 id="basic-vertex-shader">Basic vertex shader</h3>
+
+<p>Open your <code>vertex_shader.glsl</code>. We&rsquo;re going to build ourselves a basic vertex shader. The shading language used in OpenGL is called GLSL (which stands for Open Graphics Library Shading Language). This language has many different versions and the one you use depends on the OpenGL version you&rsquo;re using (check <a href="https://en.wikipedia.org/wiki/OpenGL_Shading_Language#Versions">this table</a> for details). For OpenGL 3.3 we&rsquo;ll use <strong>GLSL 330</strong>.</p>
+
+<p>GLSL is pretty much C++-like. Every command should be followed by a <strong>;</strong>, it&rsquo;s strongly and statically typed and you need to type floating point numbers with the dot. Remember these things, otherwise your program won&rsquo;t compile.</p>
+
+<p>So the very first thing you do is telling the compiler which version you&rsquo;ll use. Start your <code>vertex_shader.glsl</code> with this:</p>
+
+<pre><code class="language-c">#version 330 core
+</code></pre>
+
+<p>We&rsquo;ll also define one <code>main()</code> function:</p>
+
+<pre><code class="language-c">void main()
+{
+    gl_Position = vec4(0.0);
+}
+</code></pre>
+
+<p><code>gl_Position</code> is an output of the vertex shader which tells where the vertex should be drawn. We&rsquo;ll transform this later by using our <strong>transform matrix</strong>. But for now, this is enough to compile something. We&rsquo;ll be back to it later on.</p>
+
+<h3 id="basic-fragment-shader">Basic fragment shader</h3>
+
+<p>The fragment shader starts in the same way as the vertex one, you announce which version you&rsquo;re using before everything else. But we&rsquo;ll also declare something else, and that is the output of the fragment shader. We&rsquo;ll see some about outputs and inputs in a minute, but basically, the fragment shader is the last shader on our pipeline, and the only output is a 4-dimensional vector which is the color of our fragment.</p>
+
+<p>For now we&rsquo;ll just assign white to them. This is our <code>fragment_shader.glsl</code> content for now:</p>
+
+<pre><code class="language-c">#version 330 core
+
+out vec4 frag_color;
+
+void main()
+{
+    frag_color = vec4(1.0, 1.0, 1.0, 1.0);
+}
+
+</code></pre>
+
+<h3 id="uniforms-inputs-and-outputs">Uniforms, inputs and outputs</h3>
+
+<p>This is the time when we&rsquo;ll actually see something on the screen. Let&rsquo;s get back to our render() function, as we&rsquo;re currently doing nothing on it aside from assigning matrices. This is what it looks like right now:</p>
+
+<pre><code class="language-cpp">void render(const Object&amp; obj, GLint shader)
+{
+    auto translate = glm::identity&lt;glm::mat4&gt;();
+    auto rotation = glm::identity&lt;glm::mat4&gt;();
+    auto scale = glm::identity&lt;glm::mat4&gt;();
+
+    auto model_mat = translate * scale * rotation;
+
+    auto camera_eye = glm::vec3(0.0, 0.0, 3.0);
+    auto view_mat = glm::lookAt(
+        camera_eye,
+        glm::vec3(0.0, 0.0, 0.0),
+        glm::vec3(0.0, 1.0, 0.0)
+    );
+
+    auto projection_mat = glm::perspective&lt;float&gt;(45.0, 16.0/9.0, 0.001, 1000);
+
+    auto transform = projection_mat * view_mat * model_mat;
+}
+</code></pre>
+
+<p>What we&rsquo;re about to do here is to send these matrices to the GPU as <strong>uniforms</strong>. An uniform is a variable that comes from the computer memory to the GPU memory and all the shaders can &ldquo;see&rdquo; them as the same, hence why they&rsquo;re called &ldquo;uniforms&rdquo;. In order to do that, the first thing you need to do is to set the internal state of OpenGL to use the current shader you want it to use:</p>
+
+<pre><code class="language-cpp">    glUseProgram(shader);
+</code></pre>
+
+<p>Now this is how it goes: we&rsquo;ll use a variable (which will be a pointer) to point to the place where the uniform is, find it with an OpenGL function and send data to it with another OpenGL function. Example:</p>
+
+<pre><code class="language-cpp">    auto transform_loc = glGetUniformLocation(shader, &quot;transform&quot;);
+    glUniformMatrix4fv(transform_loc, 1, GL_FALSE, &amp;transform[0][0]);
+</code></pre>
+
+<p>We&rsquo;ll need that transform uniform to transform our vertices in the vertex shader. So, add this to the vertex shader, before the <code>main()</code> (and remember, the name of the variable should be the same you&rsquo;re using in the <code>glGetUniformLocation</code> function, otherwise OpenGL will not be able to find it!):</p>
+
+<pre><code class="language-c">uniform mat4 transform;
+</code></pre>
+
+<p>Once we have that data, we&rsquo;ll be able to transform the vertices, so we might as well just do the operation in the vertex shader:</p>
+
+<pre><code class="language-c">    gl_Position = transform * vec4(position, 1.0);
+</code></pre>
+
+<p>We&rsquo;ll do the same for the camera_eye and specular variables (we need to in order to do the Phong shading later on):</p>
+
+<pre><code class="language-cpp">    auto specular_loc = glGetUniformLocation(shader, &quot;specular&quot;);
+    glUniform1f(specular_loc, obj.get_specular());
+    auto camera_eye_loc = glGetUniformLocation(shader, &quot;camera_eye&quot;);
+    glUniform3f(camera_eye_loc, camera_eye[0], camera_eye[1], camera_eye[2]);
+</code></pre>
+
+<p>Also check out the docs for <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glUniform.xhtml">glUniform</a> if you&rsquo;re confused on how it works.</p>
+
+<p>This goes in the fragment shader:</p>
+
+<pre><code class="language-c">uniform float specular;
+uniform vec3 camera_eye;
+</code></pre>
+
+<p>We&rsquo;re done with passing uniforms. But how will the shaders receive the vertex positions in the model space to transform? And how will the shaders pass a variable to the other? That&rsquo;s what we have <strong>inputs and outputs</strong> for. They&rsquo;re a little trickier to pass to the shaders than the uniforms, as we&rsquo;ll see.</p>
+
+<p>As it works with everything else, you won&rsquo;t be able to use the inputs in the shaders if you don&rsquo;t declare them. This goes in the vertex shader:</p>
+
+<pre><code class="language-c">layout (location=0) in vec3 position;
+layout (location=1) in vec2 vertex_uvs;
+layout (location=2) in vec3 vertex_normal;
+</code></pre>
+
+<p>Are these names familiar to you? That&rsquo;s the data we read from the .obj file! And they&rsquo;re all stored in the .obj class. They&rsquo;re not set to the shader in advance, instead they are only passed to the shader when the shape is actually being rendered. What we&rsquo;ll have to do is to bind the buffers, and we&rsquo;ll make a function in the <code>Object</code> class for that (don&rsquo;t forget to put it&rsquo;s signature in the header):</p>
+
+<pre><code class="language-cpp">void Object::bind_buffers() const
+{
+    glBindVertexArray(vao);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    glBindBuffer(GL_ARRAY_BUFFER, uv_bo);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    glBindBuffer(GL_ARRAY_BUFFER, normal_bo);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+}
+</code></pre>
+
+<p>First we tell OpenGL we&rsquo;re going to use the <code>vao</code> vertex array. Then we bind the buffers that we need, set their pointers (<a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glVertexAttribPointer.xhtml">read the docs</a> in <code>glVertexAttribPointer</code> to know what the parameters are. The crucial one is the first, which is equal to what we set as &ldquo;location&rdquo; in the shader. This is how OpenGL finds the input variable), and enable them. We have now the data ready to be sent to the GPU. The final thing we need is to finally render, and we&rsquo;ll create another function for that in <code>Object</code>, which we&rsquo;ll call, you know, <code>draw()</code>.</p>
+
+<pre><code class="language-cpp">void Object::draw() const
+{
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glDrawElements(GL_TRIANGLES, faces.size(), GL_UNSIGNED_INT, NULL);
+    glBindVertexArray(0);
+}
+</code></pre>
+
+<p>As always, I recommend you to check the docs on these functions to know the details, but on short, what I&rsquo;m doing here is binding the index buffer and using <code>glDrawElements</code> to draw all the indexed triangles on the object.</p>
+
+<p>Now all you need to do it to call these functions after the uniforms are set in the <code>render()</code> method, and we get this:</p>
+
+<p><img src="/images/bcgiaw/white-sphere.png" alt="" /></p>
+
+<p>If this is your first time doing an OpenGL application, congratulations. You just rendered a shape that is far more complex than a simple triangle, which is what most people started with. So, be proud of yourself! But there&rsquo;s still more work to do. This sphere is white and ugly, and not realistic in the slightest, so we need to make it <em>shaded</em>.</p>
+
+<h3 id="passing-data-between-shaders">Passing data between shaders</h3>
+
+<p>Inputs and outputs can also be used to pass data between the shaders. One shader processes the data first and the other one uses the data that has been processed for other stuff. In our case, our pipeline consists only of the vertex shader first and the fragment shader after that, so, it&rsquo;s pretty simple. <strong>The outputs of the vertex shader will be the inputs of the fragment one.</strong></p>
+
+<p>So what if we just output all the data that we got as input in the vertex shader? This data is per vertex and the input to the fragment one is, well, per fragment. This is handled in a neat way by OpenGL: the data is linearly interpolated according to their distance to each vertex. For example:</p>
+
+<pre><code class="language-c">out vec3 pixel_position;
+out vec2 uvs;
+out vec3 normal;
+</code></pre>
+
+<p>in the vertex shader, will be caught in the fragment shader as:</p>
+
+<pre><code class="language-c">in vec3 pixel_position;
+in vec3 normal;
+in vec2 uvs;
+</code></pre>
+
+<p>Now you can also share data between the shaders!</p>
+
+<h2 id="phong-shading-with-lambertian-material">Phong shading with Lambertian material</h2>
+
+<h2 id="phong-shading-with-specular-light">Phong shading with specular light</h2>
+
+<h2 id="reading-and-loading-an-albedo-texture">Reading and loading an albedo texture</h2>
+
+<h3 id="let-s-unwrap-our-model-on-blender">Let&rsquo;s unwrap our model on Blender</h3>
+
+<h3 id="displaying-the-texture-in-our-opengl-program">Displaying the texture in our OpenGL program</h3>
+
+<h3 id="hyperbolic-texture-mapping">Hyperbolic texture mapping</h3>
+
+<h2 id="normal-mapping">Normal mapping</h2>
+
+<h2 id="further-reading-more-opengl">Further reading - more OpenGL</h2>
+</div>
+                    <br />
+                    <br />
+                    <div class="less">Page link: <a href="/post/interlude-bits-of-opengl-part-2/" class="pagelink">/post/interlude-bits-of-opengl-part-2/</a></div>
+                    <div class="line-dotted"></div>
+                <article>
+            </div>
+            <footer>
+    <div>
+    
+        &#xA9; 2019 by guangmean. All Rights Reserved.
+    
+    </div>
+</footer>
+
+        </div>
+        <div class="ads">
+    
+    
+</div>
+
+    </div>
+
+
+  <script src="/js/vendor/modernizr-3.6.0.min.js"></script>
+<script src="/js/vendor/jquery-3.3.1.min.js"></script>
+<script>window.jQuery || document.write('<script src="\/js/vendor/jquery-3.3.1.min.js"><\/script>')</script>
+<script src="/js/plugins.js"></script>
+<script src="/js/main.js"></script>  
+
+<script src="/js/vendor/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad();</script>
+                                                       
+
+<script>                                             
+    window.ga = function () { ga.q.push(arguments) }; ga.q = []; ga.l = +new Date;
+ga('create', 'UA-******', 'auto'); ga('send', 'pageview')
+</script>                                            
+<script src="//www.google-analytics.com/analytics.js" async defer></script>
+
+
+</body>
+</html>
