@@ -2,70 +2,70 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>en-us on guilherme torres</title>
-    <link>http://example.github.io/categories/en-us/</link>
+    <link>http://torresguilherme.github.io/categories/en-us/</link>
     <description>Recent content in en-us on guilherme torres</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 30 Oct 2019 13:05:29 -0300</lastBuildDate>
     
-	<atom:link href="http://example.github.io/categories/en-us/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://torresguilherme.github.io/categories/en-us/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Interlude: Bits of OpenGL, part 1 (Basic Computer Graphics in a Week)</title>
-      <link>http://example.github.io/post/interlude_bits_of_opengl/</link>
+      <link>http://torresguilherme.github.io/post/interlude_bits_of_opengl/</link>
       <pubDate>Wed, 30 Oct 2019 13:05:29 -0300</pubDate>
       
-      <guid>http://example.github.io/post/interlude_bits_of_opengl/</guid>
+      <guid>http://torresguilherme.github.io/post/interlude_bits_of_opengl/</guid>
       <description>EDIT 31/10/2019: thanks to @deccer for spotting some mistakes and design flaws on this post, they&amp;rsquo;re now fixed.
 This is an optional read for BCGIAW. We met our transforms in day two, knew our 3D models in day three and integrated like mad men in day four. How about we put that into practice a little? It&amp;rsquo;s been some time since I last posted here and it&amp;rsquo;ll be some time until the next post comes out, too.</description>
     </item>
     
     <item>
       <title>Day four: local illumination and materials (Basic Computer Graphics in a Week)</title>
-      <link>http://example.github.io/post/day_four_local_illumination_and_materials/</link>
+      <link>http://torresguilherme.github.io/post/day_four_local_illumination_and_materials/</link>
       <pubDate>Fri, 30 Aug 2019 19:57:02 -0300</pubDate>
       
-      <guid>http://example.github.io/post/day_four_local_illumination_and_materials/</guid>
+      <guid>http://torresguilherme.github.io/post/day_four_local_illumination_and_materials/</guid>
       <description>EDIT: some corrections in this article were contributions from criver from the Graphics Programming Discord community. Not every color is a Fourier transform, and I wrote &amp;ldquo;Phong&amp;rsquo;s rendering equation&amp;rdquo; instead of &amp;ldquo;Phong&amp;rsquo;s lighting model&amp;rdquo;
 This is the hardest, most complex post of this series. Bonus points if you understand everything. Light is a fundamental part of graphics, and today we learn how to emit it and how to react to it.</description>
     </item>
     
     <item>
       <title>Day three: modelling (Basic Computer Graphics in a Week)</title>
-      <link>http://example.github.io/post/day_three_modelling_basic_computer_graphics_in_a_week/</link>
+      <link>http://torresguilherme.github.io/post/day_three_modelling_basic_computer_graphics_in_a_week/</link>
       <pubDate>Mon, 26 Aug 2019 19:57:02 -0300</pubDate>
       
-      <guid>http://example.github.io/post/day_three_modelling_basic_computer_graphics_in_a_week/</guid>
+      <guid>http://torresguilherme.github.io/post/day_three_modelling_basic_computer_graphics_in_a_week/</guid>
       <description>Breathe. Focus. Let&amp;rsquo;s go. Credits to https://github.com/danielepanozzo/cg for some of the images used in the interpolation sections.
 I hope the maths didn&amp;rsquo;t scare you away in the last post. If you stuck around after the last read, that&amp;rsquo;s very good, because you just went past one of the fundamental topics of graphics. But now that you know what to do with the model points before rendering, now you should know what are exactly our models.</description>
     </item>
     
     <item>
       <title>Day two: transforms (Basic Computer Graphics in a Week)</title>
-      <link>http://example.github.io/post/day_two_transforms_basic_computer_graphics_in_a_week/</link>
+      <link>http://torresguilherme.github.io/post/day_two_transforms_basic_computer_graphics_in_a_week/</link>
       <pubDate>Mon, 26 Aug 2019 07:17:46 -0300</pubDate>
       
-      <guid>http://example.github.io/post/day_two_transforms_basic_computer_graphics_in_a_week/</guid>
+      <guid>http://torresguilherme.github.io/post/day_two_transforms_basic_computer_graphics_in_a_week/</guid>
       <description>Are you ready? This is when things get nasty. I advise you to read this post thrice if you really want to know what is going on. What I&amp;rsquo;m about to say here is essential to graphics and heavily relies on linear algebra, so I hope you did your homework. And without further ado, let&amp;rsquo;s get started.
 The preliminaries, or, what is a point, or a direction, and a matrix The most essential element of the Euclidean geometry and one of the things that every high school or college student in STEM had to deal with but yet, it is so hard to explain.</description>
     </item>
     
     <item>
       <title>Day one: introduction (Basic Computer Graphics in a Week)</title>
-      <link>http://example.github.io/post/day_one_introduction_basic_computer_graphics_in_a_week/</link>
+      <link>http://torresguilherme.github.io/post/day_one_introduction_basic_computer_graphics_in_a_week/</link>
       <pubDate>Sun, 25 Aug 2019 15:24:52 -0300</pubDate>
       
-      <guid>http://example.github.io/post/day_one_introduction_basic_computer_graphics_in_a_week/</guid>
+      <guid>http://torresguilherme.github.io/post/day_one_introduction_basic_computer_graphics_in_a_week/</guid>
       <description>Computer graphics has been one of my favorite topics to both study and cover in the last few years. In this series of posts, I intend to give you, whoever is reading this, the basic knowledge you need to know your way around this beautiful field of study, whether your intention is to be able to read papers about it, or to build applications, or just to impress your friends with knowledge.</description>
     </item>
     
     <item>
       <title>Welcome Home</title>
-      <link>http://example.github.io/post/welcome-home/</link>
+      <link>http://torresguilherme.github.io/post/welcome-home/</link>
       <pubDate>Fri, 16 Aug 2019 10:30:32 -0300</pubDate>
       
-      <guid>http://example.github.io/post/welcome-home/</guid>
+      <guid>http://torresguilherme.github.io/post/welcome-home/</guid>
       <description>I&amp;rsquo;ve been thinking about starting this website for some time now. To make myself a place where I can dump what I think about tech, programming, music, and whatever I&amp;rsquo;m doing in my spare time. I&amp;rsquo;m not sure if you ended up here because I sent you a link related to this website, which is the most likely, or someone else did, or you&amp;rsquo;ve just been stalking me and found this.</description>
     </item>
     

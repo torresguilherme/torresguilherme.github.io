@@ -3,97 +3,97 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://example.github.io/about/</loc>
+    <loc>http://torresguilherme.github.io/about/</loc>
   </url>
   
   <url>
-    <loc>http://example.github.io/contact/</loc>
+    <loc>http://torresguilherme.github.io/contact/</loc>
   </url>
   
   <url>
-    <loc>http://example.github.io/art/</loc>
+    <loc>http://torresguilherme.github.io/art/</loc>
   </url>
   
   <url>
-    <loc>http://example.github.io/categories/</loc>
+    <loc>http://torresguilherme.github.io/categories/</loc>
     <lastmod>2019-10-30T13:05:29-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://example.github.io/post/interlude_bits_of_opengl/</loc>
+    <loc>http://torresguilherme.github.io/post/interlude_bits_of_opengl/</loc>
     <lastmod>2019-10-30T13:05:29-03:00</lastmod>
   </url>
   
   <url>
-    <loc>http://example.github.io/post/</loc>
-    <lastmod>2019-10-30T13:05:29-03:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.github.io/tags/</loc>
+    <loc>http://torresguilherme.github.io/post/</loc>
     <lastmod>2019-10-30T13:05:29-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://example.github.io/tags/basic-cg-in-a-week/</loc>
+    <loc>http://torresguilherme.github.io/tags/</loc>
     <lastmod>2019-10-30T13:05:29-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://example.github.io/tags/computer-science/</loc>
+    <loc>http://torresguilherme.github.io/tags/basic-cg-in-a-week/</loc>
     <lastmod>2019-10-30T13:05:29-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://example.github.io/categories/en-us/</loc>
+    <loc>http://torresguilherme.github.io/tags/computer-science/</loc>
     <lastmod>2019-10-30T13:05:29-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://example.github.io/tags/graphics/</loc>
+    <loc>http://torresguilherme.github.io/categories/en-us/</loc>
     <lastmod>2019-10-30T13:05:29-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://example.github.io/</loc>
+    <loc>http://torresguilherme.github.io/tags/graphics/</loc>
     <lastmod>2019-10-30T13:05:29-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://example.github.io/post/day_four_local_illumination_and_materials/</loc>
+    <loc>http://torresguilherme.github.io/</loc>
+    <lastmod>2019-10-30T13:05:29-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://torresguilherme.github.io/post/day_four_local_illumination_and_materials/</loc>
     <lastmod>2019-08-30T19:57:02-03:00</lastmod>
   </url>
   
   <url>
-    <loc>http://example.github.io/post/day_three_modelling_basic_computer_graphics_in_a_week/</loc>
+    <loc>http://torresguilherme.github.io/post/day_three_modelling_basic_computer_graphics_in_a_week/</loc>
     <lastmod>2019-08-26T19:57:02-03:00</lastmod>
   </url>
   
   <url>
-    <loc>http://example.github.io/post/day_two_transforms_basic_computer_graphics_in_a_week/</loc>
+    <loc>http://torresguilherme.github.io/post/day_two_transforms_basic_computer_graphics_in_a_week/</loc>
     <lastmod>2019-08-26T07:17:46-03:00</lastmod>
   </url>
   
   <url>
-    <loc>http://example.github.io/post/day_one_introduction_basic_computer_graphics_in_a_week/</loc>
+    <loc>http://torresguilherme.github.io/post/day_one_introduction_basic_computer_graphics_in_a_week/</loc>
     <lastmod>2019-08-25T15:24:52-03:00</lastmod>
   </url>
   
   <url>
-    <loc>http://example.github.io/post/welcome-home/</loc>
+    <loc>http://torresguilherme.github.io/post/welcome-home/</loc>
     <lastmod>2019-08-16T10:30:32-03:00</lastmod>
   </url>
   
   <url>
-    <loc>http://example.github.io/tags/meta/</loc>
+    <loc>http://torresguilherme.github.io/tags/meta/</loc>
     <lastmod>2019-08-16T10:30:32-03:00</lastmod>
     <priority>0</priority>
   </url>
