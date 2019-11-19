@@ -4,19 +4,15 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1">
-    <title>Interlude Bits of Opengl, part 2 (Basic Computer Graphics in a week) - guilherme torres</title>
-
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1"> <title>Interlude: Bits of OpenGL, part 2 (Basic Computer Graphics in a Week) - guilherme torres</title>
+ 
     <meta name="keywords" content="">
     <meta name="description" content="This is an optional read for BCGIAW. In the first part, we did lots of things that may or may not have made sense. But now, time to actually see something on the screen!">
-    <meta property="og:image", content=/images/bcgiaw/interlude-part-1.png>
-    
+    <meta property="og:image" , content=/images/bcgiaw/interlude-final-result.png> 
     <link rel="stylesheet" href="/css/highlight.min.css">
     <link rel="stylesheet" href="/css/normalize.css">
     <link rel="stylesheet" href="/css/diello.css">
-    <link rel="stylesheet" href="/css/main.css">
-    
+    <link rel="stylesheet" href="/css/main.css"> 
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script>
         (adsbygoogle = window.adsbygoogle || []).push({
@@ -24,17 +20,56 @@
             enable_page_level_ads: true
         });
     </script>
-    
-    
+      <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [
+                ['$', '$'],
+                ['\\(', '\\)']
+            ],
+            displayMath: [
+                ['$$', '$$']
+            ],
+            processEscapes: true,
+            processEnvironments: true,
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+            TeX: {
+                equationNumbers: {
+                    autoNumber: "AMS"
+                },
+                extensions: ["AMSmath.js", "AMSsymbols.js"]
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        
+        
+        
+        var all = MathJax.Hub.getAllJax(),
+            i;
+        for (i = 0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+    MathJax.Hub.Config({
+        
+        TeX: {
+            equationNumbers: {
+                autoNumber: "AMS"
+            }
+        }
+    });
+</script>
 </head>
 
-
 <body>
+    
     <!--[if lte IE 9]>
     <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
     <![endif]-->
 
-  
+    
     <div class="flex-column">
         <div class="ads">
     
@@ -66,10 +101,28 @@
 
             <div>
                 <article>
-                    <h3>Interlude Bits of Opengl, part 2 (Basic Computer Graphics in a week)</h3>
+                    <h3>Interlude: Bits of OpenGL, part 2 (Basic Computer Graphics in a Week)</h3>
                     <div class="less">
-                        <time>Published: Wednesday, Oct 30, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;13 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 2589 words
+                        <time>Published: Monday, Nov 18, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;25 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 5265 words
                     </div>
+                    
+                    
+                    <ul id="tags">
+                        <p>
+                            tags:   
+                            <a href="http://torresguilherme.github.io/tags/computer-science/ ">computer-science</a>    
+                            <a href="http://torresguilherme.github.io/tags/graphics/ ">graphics</a>    
+                            <a href="http://torresguilherme.github.io/tags/basic-cg-in-a-week/ ">basic-cg-in-a-week</a>  
+                        </p>
+                    </ul>
+                    
+                    
+                    <ul id="categories">
+                        <p>
+                            categories:   
+                            <a href="http://torresguilherme.github.io/categories/en-us/ ">en-us</a>  
+                        </p>
+                    </ul>
                     <div class="em">
 
 <h3 id="this-is-an-optional-read-for-bcgiaw-in-the-first-part-we-did-lots-of-things-that-may-or-may-not-have-made-sense-but-now-time-to-actually-see-something-on-the-screen">This is an optional read for BCGIAW. In the first part, we did lots of things that may or may not have made sense. But now, time to actually see something on the screen!</h3>
@@ -84,7 +137,7 @@
 
 <h2 id="reading-shaders">Reading shaders</h2>
 
-<p>This is the not-so-fun part, but this is due to a reason. We could just read the shaders naively and let the program crash if something goes wrong, but we&rsquo;re not going to do that because we&rsquo;re not like those lazy and non-creative programmers who rely on the OS safety measures to have their asses. Here we&rsquo;ll handle errors. We&rsquo;ll pretend we&rsquo;re programming on Temple OS. Especially in a field like computer graphics, where things are so tricky to debug and if you get a pitch black screen on OpenGL it might be due to many different reasons, this is very important.</p>
+<p>This is the not-so-fun part, but this is due to a reason. We could just read the shaders naively and let the program crash if something goes wrong, but we&rsquo;re not going to do that because we&rsquo;re not like those lazy and non-creative programmers who rely on the OS safety measures to have their lives. Here we&rsquo;ll handle errors. We&rsquo;ll pretend we&rsquo;re programming on Temple OS. Especially in a field like computer graphics, where things are so tricky to debug and if you get a pitch black screen on OpenGL it might be due to many different reasons, this is very important.</p>
 
 <p>Our shading reading process will consist of three functions:</p>
 
@@ -423,29 +476,405 @@ in vec3 normal;
 in vec2 uvs;
 </code></pre>
 
-<p>Now you can also share data between the shaders!</p>
+<p>Now you can also share data between the shaders, as we&rsquo;re doing in this vertex shader example:</p>
+
+<pre><code class="language-c">void main()
+{
+    gl_Position = transform * vec4(position, 1.0);
+    pixel_position = gl_Position.xyz;
+    normal = vertex_normal;
+    uvs = vertex_uvs;
+}
+</code></pre>
 
 <h2 id="phong-shading-with-lambertian-material">Phong shading with Lambertian material</h2>
 
+<p>Just as a reminder, this is Phong&rsquo;s lighting model which we&rsquo;re going to program:</p>
+
+<p>$$
+I_{out} = I_d + I_s + I_a = \frac{\rho}{\pi} (n \cdot v) + k_s (r \cdot v)^{rough} + \rho_a k_a
+$$</p>
+
+<p>If you paid attention to day four, you should know what each term of the equation means. We&rsquo;re leaving the specular component out for now, because it&rsquo;s a little trickier to simulate, so this is what it&rsquo;ll look like in a Lambertian material:</p>
+
+<p>$$
+I_{out} = \frac{\rho}{\pi} (n \cdot v) + \rho_a k_a
+$$</p>
+
+<p>We&rsquo;re getting an interpolated normal from the input in the fragment shader, if you implemented the example above, so it&rsquo;s not going to be that difficult to make the Phong shading. With a Lambertian material, it&rsquo;s actually nothing short of a dot product. In this case, as this is just a basic example of lighting, we&rsquo;ll hard code the light source in the shader, but you already know how to send data from the computer memory to the GPU, right?</p>
+
+<p>First we&rsquo;ll code values for the light source position and the ambient light in the fragment shader (and actually, all of our work here will be done in the fragment shader for now), like this:</p>
+
+<pre><code class="language-c">const float PI = 3.141;
+
+void main()
+{
+    vec3 light_source = vec3(1.5, 1.5, 1.0);
+    float light_energy = 3.0;
+    vec4 ambient_light = vec4(0.1, 0.1, 0.1, 1.0);
+</code></pre>
+
+<p>As we move forward we&rsquo;ll declare the light parameters for each color as <strong>1.0</strong> and we&rsquo;ll divide them by the dot product between the incident light ray and the normal, which we got from the input:</p>
+
+<pre><code class="language-c">    float red = 1.0;
+    float green = 1.0;
+    float blue = 1.0;
+
+    vec3 n_normal = normalize(normal);
+
+    // phong shading
+    float dot_product = max(dot(n_normal, normalize(light_source)), 0.0);
+    red *= dot_product / PI * light_energy;
+    green *= dot_product / PI * light_energy;
+    blue *= dot_product / PI * light_energy;
+
+    // todo: specular
+
+    frag_color = vec4(red, green, blue, 1.0) + ambient_light;
+}
+</code></pre>
+
+<p>And we divide by &pi;, as we saw in day four. Finally, the output color will be the vec4 built with these 3 values, plus the ambient light, according to the Phong lighting model. And we get this tiny low-poly Death Star:</p>
+
+<p><img src="/images/bcgiaw/lambertian-interlude.png" alt="" /></p>
+
+<p>That was pretty simple. As you can see, in my picture, the number of polygons is pretty low, so the sphere does not look yet perfectly round, especially if you look at the edges. You can increase the number of polygons in Blender and export the mesh if you want.</p>
+
 <h2 id="phong-shading-with-specular-light">Phong shading with specular light</h2>
+
+<p>This is how our specular light is defined, in case you don&rsquo;t remember:</p>
+
+<p>$$
+I_s = k_s (r \cdot v)^{rough}
+$$</p>
+
+<p>In orderto simulate this, we&rsquo;ll simply hard code the roughness in the shader. The specular component $k_s$ is being sent to the GPU already as 0.1, but I changed it to 0.6 after some tuning. As always, feel free to mess with and change these values and see how they change the final rendering.</p>
+
+<p>So we set a constant in the shader like this:</p>
+
+<pre><code class="language-c">const float PI = 3.141;
+const float roughness = 8.0;
+</code></pre>
+
+<p>And we add this where we commented that <em>todo: specular</em>:</p>
+
+<pre><code class="language-c">    // specular
+    vec3 reflection_vec = 2.0 * dot(normalize(light_source), n_normal) * n_normal - normalize(light_source);
+    float specular_light = specular * pow(dot(reflection_vec, normalize(camera_eye)), roughness);
+    specular_light = max(0.0, specular_light);
+</code></pre>
+
+<p>Finally, you should of course add the specular light to the final result:</p>
+
+<pre><code class="language-c">    frag_color = vec4(red, green, blue, 1.0) + vec4(specular_light) + ambient_light;
+</code></pre>
+
+<p>First thing we did is to reflect the ray on the surface. This can be done by using some vector algebra. Given an incoming ray of light $\vec{l}$, the projection of $\vec{l}$ on $\vec{n}$ which is $(\vec{l} \cdot \vec{n})\vec{n}$, and the projection of $\vec{l}$ on the tangent of the surface which is $\vec{l} - (\vec{l} \cdot \vec{n})\vec{n}$, we have this equation (remember that all vectors involved are unit vectors):</p>
+
+<p>$$
+\vec{r} = (\vec{l} \cdot \vec{n})\vec{n} - [\vec{l} - (\vec{l} \cdot \vec{n})\vec{n}]
+$$</p>
+
+<p>Therefore:</p>
+
+<p>$$
+\vec{r} = 2(\vec{l} \cdot \vec{n})\vec{n} - \vec{l}
+$$</p>
+
+<p>which is the value that we keep in our <code>reflection_vec</code> variable. And this is what our result looks like:</p>
+
+<p><img src="/images/bcgiaw/specular-sphere.png" alt="" /></p>
 
 <h2 id="reading-and-loading-an-albedo-texture">Reading and loading an albedo texture</h2>
 
+<p>The first step to reading a texture and using it in OpenGL is, of course, having a texture. There are lots of open textures with normal maps around the internet, so you can just Google it (take care though, many of them are protected by copyright laws. You can still use them for educational purposes, like following this tutorial, but be aware of that if you plan on actually making a game with those textures. I got mine from <a href="https://opengameart.org/content/dirty-brick-seamless-texture-with-normalmap">here</a>). Also, I already downloaded the normal map, because we&rsquo;ll need it later.</p>
+
+<p>Once we have our textures ready, we also have another problem: the computer can&rsquo;t just guess which are our texture coordinates! We have some coordinates now in the .obj file, but we never really set them ourselves. In order to make sure that they&rsquo;re exactly how we want them, we need a graphics editor. And that&rsquo;s when Blender comes into play again.</p>
+
 <h3 id="let-s-unwrap-our-model-on-blender">Let&rsquo;s unwrap our model on Blender</h3>
+
+<p>Open Blender once again and delete the cube from existence. This time we&rsquo;ll import our sphere, so go to File -&gt; Import -&gt; Wavefront and choose the sphere we&rsquo;re working with. You should see this:</p>
+
+<p><img src="/images/bcgiaw/blender-import-sphere.png" alt="" /></p>
+
+<p>Also remember to change the viewport shading from solid to <strong>LookDev</strong> or <strong>rendered</strong> since we&rsquo;ll want to see how our texture is being wrapped around the sphere. Now change the tab to <strong>UV Editing</strong> and you&rsquo;ll see the screen split in two parts. If you can&rsquo;t see what each part is, the first is a 2D editor which is used for images and the second is the same 3D editor we see when we open Blender.</p>
+
+<p>Now, one the first part of the screen, there is a bar on top of it. Click on <strong>Image</strong>, open your texture image and you&rsquo;ll see that the grey rectangle is now filled with (possibly) a brick wall picture. You should see something like this:</p>
+
+<p><img src="/images/bcgiaw/blender-texture.png" alt="" /></p>
+
+<p>Now click on the sphere and go to edit mode (Tab button, if all the faces aren&rsquo;t selected then press A).</p>
+
+<p><img src="/images/bcgiaw/blender-texture-edit.png" alt="" /></p>
+
+<p>This is what you should see (remember, if you need to zoom on the sphere you can do it with the mouse scroll). Notice that all the sphere polygons are distributed on the texture on the 2D editor! You can edit them as if they were regular faces in the Blender 3D editor.</p>
+
+<p>You have several options now. You can either press U and see many unwrap options (search on them if you&rsquo;re interested), or you can leave it as it is and only edit the rotation, scale and transform (use the buttons R, S and G, respectively, to do each one of them).</p>
+
+<p>Also while you&rsquo;re doing that, you probably want to see how the texture is being fit on the shape. In order to do that, you go to the Material tab on the right and you should see something like this:</p>
+
+<p><img src="/images/bcgiaw/blender-material-editor.png" alt="" /></p>
+
+<p>Click on RGB (or whatever is in the Base Color box) and change it to Image Texture. When you see the option to open a file, open the image you want to use as texture and this is how it should look like:</p>
+
+<p><img src="/images/bcgiaw/blender-with-texture.png" alt="" /></p>
+
+<p>(I also left the edit mode with Tab so you can see it more clearly. You need to go back to edit mode if you want to edit the UVs). Now, you play with the shapes in the UV editor for as long as you like, and see how it changes in the 3D appearance. I&rsquo;m just gonna scale them all up so the bricks appear smaller:</p>
+
+<p><img src="/images/bcgiaw/blender-after-uv-edit.png" alt="" /></p>
+
+<p>Once you&rsquo;re comfortable with your texture setup, you can export again. Use the same parameters as before. Your new UV coordinates will be ready.</p>
 
 <h3 id="displaying-the-texture-in-our-opengl-program">Displaying the texture in our OpenGL program</h3>
 
-<h3 id="hyperbolic-texture-mapping">Hyperbolic texture mapping</h3>
+<p>Now we load the images on our memory and we prepare to render them. The first thing we need (well, aside from the images themselves, which we already have) is a image loader, because loading images manually is a painful process (there are many types of lossless and lossy compressions). Luckily, there&rsquo;s a public image loader called <a href="https://raw.githubusercontent.com/nothings/stb/master/stb_image.h">STB Image</a>, which we&rsquo;re going to use. When including the stb_image header on your project, you should follow its instructions though. We&rsquo;ll do that in the <code>object.cpp</code> file. After including all the other headers, do as I do:</p>
 
-<h2 id="normal-mapping">Normal mapping</h2>
+<pre><code class="language-cpp">#define STB_IMAGE_IMPLEMENTATION
+#include &quot;stb_image.h&quot;
+</code></pre>
+
+<p>Also, we&rsquo;re sending another parameter to the <code>Object</code>  constructor which is a normal map file name. We&rsquo;ll import the normal map here in advance so that we won&rsquo;t have any problems later. So, this is how it&rsquo;s going to be:</p>
+
+<pre><code class="language-cpp">public:
+    Object(const std::string&amp; filename, const std::string&amp; texfile, const std::string&amp; normalmapfile, float specular);
+</code></pre>
+
+<p>After these changes, we&rsquo;re first going to put some new components in our <code>Object</code> class. We want to keep everything as organized as possible, so we&rsquo;ll create an enumeration to index the texture types and an array of textures. This is how it&rsquo;s going to look like after the changes:</p>
+
+<pre><code class="language-cpp">    std::vector&lt;float&gt; vertices;
+    std::vector&lt;uint&gt; faces;
+    std::vector&lt;float&gt; normals;
+    std::vector&lt;uint&gt; normal_indices;
+    std::vector&lt;float&gt; uvs;
+    std::vector&lt;uint&gt; uv_indices;
+
+    GLuint vao;
+
+public:
+    enum
+    {
+        ALBEDO_TEXTURE_INDEX,
+        NORMAL_MAP_INDEX,
+        TEXTURES_TOTAL
+    };
+
+private:
+    GLuint vbo;
+    GLuint ibo;
+    GLuint normal_bo;
+    GLuint uv_bo;
+    GLuint textures[TEXTURES_TOTAL];
+    std::vector&lt;int&gt; texture_widths;
+    std::vector&lt;int&gt; texture_heights;
+    std::vector&lt;int&gt; image_components;
+    float specular;
+</code></pre>
+
+<p>And finally in the header, we&rsquo;ll add these function signatures (they&rsquo;ll be responsible for loading the image and then sending the data to the GPU):</p>
+
+<pre><code class="language-cpp">    unsigned char* load_image(const std::string&amp; filename);
+    void bind_texture(unsigned char* texture, int index);
+    void load_textures(const std::string&amp; texfile, const std::string&amp; normalmapfile);
+</code></pre>
+
+<p><code>unsigned char*</code> is used for the texture data because that&rsquo;s what stb_image returns when you load an image with it. If you think about it, it makes sense. An unsigned char is only 1 byte long, so it&rsquo;s the ideal to keep image data if you wanna save some disk space.</p>
+
+<p>These are the three functions that we&rsquo;ll use to load the image data and send it to the GPU:</p>
+
+<pre><code class="language-cpp">unsigned char* Object::load_image(const std::string&amp; filename)
+{
+    int width;
+    int height;
+    int num_components;
+	unsigned char* image_data = stbi_load(filename.c_str(), &amp;width, &amp;height, &amp;num_components, 4);
+
+	if(image_data == NULL)
+	{
+		std::cerr&lt;&lt;&quot;error: couldn't load image &quot;&lt;&lt;filename&lt;&lt;std::endl;
+        return nullptr;
+	}
+
+    texture_widths.push_back(width);
+    texture_heights.push_back(height);
+    image_components.push_back(num_components);
+
+    return image_data;
+}
+</code></pre>
+
+<p>First one loads the image, checks for an error and returns the data. It also pushes the image height, width and number of components into our vectors (we&rsquo;re going to need the width and height later in order to send the textures).</p>
+
+<pre><code class="language-cpp">void Object::bind_texture(unsigned char* texture_data, int index)
+{
+	glGenTextures(1, &amp;textures[index]);
+	glBindTexture(GL_TEXTURE_2D, textures[index]);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture_widths[index], texture_heights[index], 0, GL_RGBA, GL_UNSIGNED_BYTE, texture_data);
+}
+</code></pre>
+
+<p>This one creates a texture just like we did with the meshes, and sets some parameters before calling the <code>glTexImage2D</code>. As always, I advise you to read the docs for details on how this works. Finally, we need one function to call them both:</p>
+
+<pre><code class="language-cpp">void Object::load_textures(const std::string&amp; texfile, const std::string&amp; normalmapfile)
+{
+    unsigned char *texture_image = load_image(texfile);
+    bind_texture(texture_image, ALBEDO_TEXTURE_INDEX);
+    unsigned char *normal_map = load_image(normalmapfile);
+    bind_texture(normal_map, NORMAL_MAP_INDEX);
+    stbi_image_free(texture_image);
+    stbi_image_free(normal_map);
+}
+</code></pre>
+
+<p>Notice that we also free the image from the memory when we&rsquo;re done, as always. Which reminds us, we should also do that one the GPU when our program is stopped. So change the <code>glDeleteTextures</code> on the destructor to this:</p>
+
+<pre><code class="language-cpp">    glDeleteTextures(TEXTURES_TOTAL, textures);
+</code></pre>
+
+<p>And now you call <code>load_textures()</code> on the constructor, like this:</p>
+
+<pre><code class="language-cpp">    load_textures(texfile, normalmapfile);
+    // remember to do it before we bind a null address in the internal VAO pointer
+    glBindVertexArray(0);
+</code></pre>
+
+<p>Great! Are we done?</p>
+
+<p>Haha no.</p>
+
+<p>When we render, we also need to tell OpenGL that we&rsquo;re using these textures. So you need to call <code>glActiveTexture()</code> to tell OpenGL the index of the texture we&rsquo;re going to send to render and <code>glBindTexture()</code> to tell the pointer which we&rsquo;re using. This is how our new <code>bind_buffers()</code> function will look like:</p>
+
+<pre><code class="language-cpp">void Object::bind_buffers() const
+{
+    glBindVertexArray(vao);
+
+    glActiveTexture(GL_TEXTURE0 + ALBEDO_TEXTURE_INDEX);
+    glBindTexture(GL_TEXTURE_2D, textures[ALBEDO_TEXTURE_INDEX]);
+
+    glActiveTexture(GL_TEXTURE0 + NORMAL_MAP_INDEX);
+    glBindTexture(GL_TEXTURE_2D, textures[NORMAL_MAP_INDEX]);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    glBindBuffer(GL_ARRAY_BUFFER, uv_bo);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    glBindBuffer(GL_ARRAY_BUFFER, normal_bo);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+}
+</code></pre>
+
+<p>We&rsquo;re almost done with our C++ code. The last thing we need to do is to fix the indexes of the textures in the shader as <code>ALBEDO_TEXTURE_INDEX</code> and <code>NORMAL_MAP_INDEX</code> so we can send them both to render simutaneously. Luckily, this is pretty straightforward, as we can do that as soon as we create the object (I&rsquo;m going to do this in the <code>main</code>file):</p>
+
+<pre><code class="language-cpp">void set_texture_locations(const Object&amp; object, const GLuint&amp; shader)
+{
+    glUseProgram(shader);
+    auto albedo_location = glGetUniformLocation(shader, &quot;albedo_texture&quot;);
+    auto normal_map_location = glGetUniformLocation(shader, &quot;normal_map&quot;);
+    glUniform1i(albedo_location, object.ALBEDO_TEXTURE_INDEX);
+    glUniform1i(normal_map_location, object.NORMAL_MAP_INDEX);
+}
+</code></pre>
+
+<p>You should also put the signature of this function where you can see it, and then call it on your object and texture.</p>
+
+<pre><code class="language-cpp">    set_texture_locations(sphere, shader);
+</code></pre>
+
+<p>That&rsquo;s it, we&rsquo;re done with the C++ here. Compile and see if everything&rsquo;s OK. The work now needs to be done in the shader, and it&rsquo;s really simple. We create two <code>sampler2D</code> uniforms on the fragment shader and make sure it has the same name as we&rsquo;re searching for in the <code>set_texture_locations</code> method.</p>
+
+<p>GLSL has a built-in method called <code>texture2D</code> which takes in a sampler2D and 2D coordinates and outputs whatever is in the image. In our case, we need a <code>vec4</code> to get the variable that has the albedo data. And we can access its fields with the .r, .g, .b suffixes (we can actually do this with any vector in GLSL, not just the one that has color data, as GLSL doesn&rsquo;t see any difference between those, but this is really convenient, isn&rsquo;t it?). In the end, we just add the modified albedo to the specular data and the ambient light, and we have our fragment color ready!</p>
+
+<pre><code class="language-c">void main()
+{
+    vec3 light_source = vec3(1.5, 1.5, 1.0);
+    float light_energy = 3.0;
+    vec4 ambient_light = vec4(0.1, 0.1, 0.1, 1.0);
+
+    float red = 1.0;
+    float green = 1.0;
+    float blue = 1.0;
+
+    vec3 n_normal = normalize(normal);
+
+    vec4 albedo = texture2D(albedo_texture, uvs);
+
+    // phong shading
+    float dot_product = max(dot(n_normal, normalize(light_source)), 0.0);
+    albedo.r *= dot_product / PI * light_energy;
+    albedo.g *= dot_product / PI * light_energy;
+    albedo.b *= dot_product / PI * light_energy;
+
+    // specular
+    vec3 reflection_vec = 2.0 * dot(normalize(light_source), n_normal) * n_normal - normalize(light_source);
+    float specular_light = specular * pow(dot(reflection_vec, normalize(camera_eye)), roughness);
+    specular_light = max(0.0, specular_light);
+
+    frag_color = albedo + vec4(specular_light) + ambient_light;
+}
+</code></pre>
+
+<p>This is how our fragment shader <code>main()</code> will look like in the end. If everything works fine for you (hopefully it will), you&rsquo;ll see the result:</p>
+
+<p><img src="/images/bcgiaw/sphere-with-texture.png" alt="" /></p>
+
+<h3 id="normal-mapping">Normal mapping</h3>
+
+<p>Fortunately we already did most of the work that will allow us to do the normal mapping. All we need to do now is to multiply the normal vector by what&rsquo;s in the UV coordinates in the normal map:</p>
+
+<pre><code class="language-c">    vec3 n_normal = (normalize(normal) * texture2D(normal_map, uvs).xyz);
+</code></pre>
+
+<p>Keep in mind that this is NOT a dot or cross product, it&rsquo;s element-wise product of two vectors. Also, this would be much harder if the object wasn&rsquo;t static and at zero position in the world, sure. As we saw in day three of the series, you&rsquo;d need to calculate the <strong>TBN matrix</strong>. So keep that in mind if you want to use this in games.</p>
+
+<p><img src="/images/bcgiaw/interlude-final-result.png" alt="" /></p>
+
+<h2 id="had-any-difficulty-following-any-of-this">Had any difficulty following any of this?</h2>
+
+<p>You can check out my own code if you prefer <a href="https://github.com/torresguilherme/bits-of-opengl">here</a>.</p>
 
 <h2 id="further-reading-more-opengl">Further reading - more OpenGL</h2>
+
+<p>Two posts aren&rsquo;t nearly enough to cover all there is to cover about OpenGL. You can see more about how to do stuff with it at:</p>
+
+<ul>
+<li><p><a href="https://learnopengl.com/Introduction">Learn OpenGL</a>;</p></li>
+
+<li><p><a href="http://www.opengl-tutorial.org/">opengl-tutorial</a>;</p></li>
+
+<li><p><a href="https://www.youtube.com/playlist?list=PLEETnX-uPtBXT9T-hD0Bj31DSnwio-ywh">thebennybox&rsquo;s series</a> is also quite great if this introduction was way too rapid-fire for you. I, for one, started with it back in the day.</p></li>
+</ul>
+
+<p>As always, I don&rsquo;t know when the next post is coming. Probably after my finals. But if you re looking forward to part 5 of the series, start checking out on <strong>rasterisation and raytracing</strong>.</p>
+
+<p><a href="/post/day_one_introduction_basic_computer_graphics_in_a_week/">Day one - introduction</a></p>
+
+<p><a href="/post/day_two_transforms_basic_computer_graphics_in_a_week/">Day two - transforms</a></p>
+
+<p><a href="/post/day_three_modelling_basic_computer_graphics_in_a_week/">Day three - modelling</a></p>
+
+<p><a href="/post/day_four_local_illumination_and_materials/">Day four - local illumination and materials</a></p>
+
+<p><a href="/post/interlude_bits_of_opengl">Interlude - Bits of OpenGL, part 1</a></p>
+
+<p><a href="/post/interlude-bits-of-opengl-part-2">Interlude - Bits of OpenGL, part 2</a></p>
 </div>
                     <br />
                     <br />
                     <div class="less">Page link: <a href="/post/interlude-bits-of-opengl-part-2/" class="pagelink">/post/interlude-bits-of-opengl-part-2/</a></div>
                     <div class="line-dotted"></div>
-                <article>
+                    <article>
             </div>
             <footer>
     <div>
@@ -464,7 +893,7 @@ in vec2 uvs;
     </div>
 
 
-  <script src="/js/vendor/modernizr-3.6.0.min.js"></script>
+    <script src="/js/vendor/modernizr-3.6.0.min.js"></script>
 <script src="/js/vendor/jquery-3.3.1.min.js"></script>
 <script>window.jQuery || document.write('<script src="\/js/vendor/jquery-3.3.1.min.js"><\/script>')</script>
 <script src="/js/plugins.js"></script>
@@ -482,4 +911,5 @@ ga('create', 'UA-******', 'auto'); ga('send', 'pageview')
 
 
 </body>
+
 </html>
