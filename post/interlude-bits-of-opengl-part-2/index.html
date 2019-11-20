@@ -8,7 +8,7 @@
  
     <meta name="keywords" content="">
     <meta name="description" content="This is an optional read for BCGIAW. In the first part, we did lots of things that may or may not have made sense. But now, time to actually see something on the screen!">
-    <meta property="og:image" , content=/images/bcgiaw/interlude-final-result.png> 
+    <meta property="og:image" , content=/images/bcgiaw/interlude-final-result2.png> 
     <link rel="stylesheet" href="/css/highlight.min.css">
     <link rel="stylesheet" href="/css/normalize.css">
     <link rel="stylesheet" href="/css/diello.css">
@@ -103,7 +103,7 @@
                 <article>
                     <h3>Interlude: Bits of OpenGL, part 2 (Basic Computer Graphics in a Week)</h3>
                     <div class="less">
-                        <time>Published: Monday, Nov 18, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;25 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 5265 words
+                        <time>Published: Monday, Nov 18, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;25 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 5189 words
                     </div>
                     
                     
@@ -112,7 +112,8 @@
                             tags:   
                             <a href="http://torresguilherme.github.io/tags/computer-science/ ">computer-science</a>    
                             <a href="http://torresguilherme.github.io/tags/graphics/ ">graphics</a>    
-                            <a href="http://torresguilherme.github.io/tags/basic-cg-in-a-week/ ">basic-cg-in-a-week</a>  
+                            <a href="http://torresguilherme.github.io/tags/basic-cg-in-a-week/ ">basic-cg-in-a-week</a>    
+                            <a href="http://torresguilherme.github.io/tags/opengl/ ">opengl</a>  
                         </p>
                     </ul>
                     
@@ -156,14 +157,16 @@ GLint check_shader_error(GLuint shader, GLuint flag, bool is_program);
 	std::string output;
 	std::string line;
 
-	if(file.is_open())
+	if(!file.is_open())
 	{
-		while(file.good())
-		{
-			std::getline(file, line);
-			output.append(line + &quot;\n&quot;);
-		}
+        return &quot;&quot;;
 	}
+
+    while(file.good())
+    {
+        std::getline(file, line);
+        output.append(line + &quot;\n&quot;);
+    }
 
 	return output;
 }
@@ -186,9 +189,9 @@ GLint check_shader_error(GLuint shader, GLuint flag, bool is_program);
 	if(success == GL_FALSE)
 	{
 		if(is_program)
-			glGetProgramInfoLog(shader, sizeof(error), NULL, error);
+			glGetProgramInfoLog(shader, sizeof(error), nullptr, error);
 		else
-			glGetShaderInfoLog(shader, sizeof(error), NULL, error);
+			glGetShaderInfoLog(shader, sizeof(error), nullptr, error);
 
 		std::cerr&lt;&lt;error&lt;&lt;std::endl;
 	}
@@ -243,7 +246,7 @@ GLint check_shader_error(GLuint shader, GLuint flag, bool is_program);
     else
     {
         std::cerr&lt;&lt;&quot;Couldn't compile vertex shader, aborting\n&quot;;
-        exit(1);
+        return -1;
     }
 </code></pre>
 
@@ -260,7 +263,7 @@ GLint check_shader_error(GLuint shader, GLuint flag, bool is_program);
     else
     {
         std::cerr&lt;&lt;&quot;Couldn't compile fragment shader, aborting\n&quot;;
-        exit(1);
+        return -1;
     }
 </code></pre>
 
@@ -271,14 +274,14 @@ GLint check_shader_error(GLuint shader, GLuint flag, bool is_program);
     if(!success)
     {
         std::cerr&lt;&lt;&quot;Couldn't link program, aborting\n&quot;;
-        exit(1);
+        return -1;
     }
     glValidateProgram(program);
     success = check_shader_error(program, GL_VALIDATE_STATUS, true);
     if(!success)
     {
         std::cerr&lt;&lt;&quot;Couldn't validate program, aborting\n&quot;;
-        exit(1);
+        return -1;
     }
 
     return program;
@@ -287,7 +290,13 @@ GLint check_shader_error(GLuint shader, GLuint flag, bool is_program);
 <p>We&rsquo;re ready to read shaders! Now call this function in your <code>main()</code> with the file names as parameters (also create the files, of course, because they&rsquo;re where we write the shader code).</p>
 
 <pre><code class="language-cpp">    auto shader = compile_shader(&quot;src/vertex_shader.glsl&quot;, &quot;src/fragment_shader.glsl&quot;); // shader will receive the full linked program
-    auto sphere = Object(&quot;res/sphere.obj&quot;, &quot;res/bricks.obj&quot;, 0.1); // we're adding the object as well
+    if(shader &lt; 0)
+    {
+        std::cout&lt;&lt;&quot;Failed to compile shader\n&quot;;
+        glfwTerminate();
+        return -1;
+    }
+    auto sphere = Object(&quot;res/sphere.obj&quot;, &quot;res/brick_albedo.jpg&quot;, 0.1); // we're adding the object as well
 
     // render loop
     while(!glfwWindowShouldClose(window))
@@ -426,13 +435,13 @@ layout (location=2) in vec3 vertex_normal;
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
     glBindBuffer(GL_ARRAY_BUFFER, uv_bo);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
     glBindBuffer(GL_ARRAY_BUFFER, normal_bo);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
@@ -445,7 +454,7 @@ layout (location=2) in vec3 vertex_normal;
 <pre><code class="language-cpp">void Object::draw() const
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glDrawElements(GL_TRIANGLES, faces.size(), GL_UNSIGNED_INT, NULL);
+    glDrawElements(GL_TRIANGLES, faces.size(), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
 }
 </code></pre>
@@ -688,7 +697,7 @@ private:
     int num_components;
 	unsigned char* image_data = stbi_load(filename.c_str(), &amp;width, &amp;height, &amp;num_components, 4);
 
-	if(image_data == NULL)
+	if(image_data == nullptr)
 	{
 		std::cerr&lt;&lt;&quot;error: couldn't load image &quot;&lt;&lt;filename&lt;&lt;std::endl;
         return nullptr;
@@ -704,7 +713,7 @@ private:
 
 <p>First one loads the image, checks for an error and returns the data. It also pushes the image height, width and number of components into our vectors (we&rsquo;re going to need the width and height later in order to send the textures).</p>
 
-<pre><code class="language-cpp">void Object::bind_texture(unsigned char* texture_data, int index)
+<pre><code class="language-cpp">void Object::setup_texture(unsigned char* texture_data, int index)
 {
 	glGenTextures(1, &amp;textures[index]);
 	glBindTexture(GL_TEXTURE_2D, textures[index]);
@@ -724,11 +733,17 @@ private:
 <pre><code class="language-cpp">void Object::load_textures(const std::string&amp; texfile, const std::string&amp; normalmapfile)
 {
     unsigned char *texture_image = load_image(texfile);
-    bind_texture(texture_image, ALBEDO_TEXTURE_INDEX);
+    if(texture_image)
+    {
+        setup_texture(texture_image, ALBEDO_TEXTURE_INDEX);
+        stbi_image_free(texture_image);
+    }
     unsigned char *normal_map = load_image(normalmapfile);
-    bind_texture(normal_map, NORMAL_MAP_INDEX);
-    stbi_image_free(texture_image);
-    stbi_image_free(normal_map);
+    if(normal_map)
+    {
+        setup_texture(normal_map, NORMAL_MAP_INDEX);
+        stbi_image_free(normal_map);
+    }
 }
 </code></pre>
 
@@ -761,13 +776,13 @@ private:
     glBindTexture(GL_TEXTURE_2D, textures[NORMAL_MAP_INDEX]);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
     glBindBuffer(GL_ARRAY_BUFFER, uv_bo);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
     glBindBuffer(GL_ARRAY_BUFFER, normal_bo);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
@@ -775,24 +790,12 @@ private:
 }
 </code></pre>
 
-<p>We&rsquo;re almost done with our C++ code. The last thing we need to do is to fix the indexes of the textures in the shader as <code>ALBEDO_TEXTURE_INDEX</code> and <code>NORMAL_MAP_INDEX</code> so we can send them both to render simutaneously. Luckily, this is pretty straightforward, as we can do that as soon as we create the object (I&rsquo;m going to do this in the <code>main</code>file):</p>
+<p>That&rsquo;s it, we&rsquo;re done with the C++ here. Compile and see if everything&rsquo;s OK. The work now needs to be done in the shader, and it&rsquo;s really simple. We create two <code>sampler2D</code> uniforms on the fragment shader and make sure their locations are properly set up to match out enumeration indices.</p>
 
-<pre><code class="language-cpp">void set_texture_locations(const Object&amp; object, const GLuint&amp; shader)
-{
-    glUseProgram(shader);
-    auto albedo_location = glGetUniformLocation(shader, &quot;albedo_texture&quot;);
-    auto normal_map_location = glGetUniformLocation(shader, &quot;normal_map&quot;);
-    glUniform1i(albedo_location, object.ALBEDO_TEXTURE_INDEX);
-    glUniform1i(normal_map_location, object.NORMAL_MAP_INDEX);
-}
+<pre><code class="language-c">#extension GL_ARB_explicit_uniform_location : require
+layout (location=0) uniform sampler2D albedo_texture;
+layout (location=1) uniform sampler2D normal_map;
 </code></pre>
-
-<p>You should also put the signature of this function where you can see it, and then call it on your object and texture.</p>
-
-<pre><code class="language-cpp">    set_texture_locations(sphere, shader);
-</code></pre>
-
-<p>That&rsquo;s it, we&rsquo;re done with the C++ here. Compile and see if everything&rsquo;s OK. The work now needs to be done in the shader, and it&rsquo;s really simple. We create two <code>sampler2D</code> uniforms on the fragment shader and make sure it has the same name as we&rsquo;re searching for in the <code>set_texture_locations</code> method.</p>
 
 <p>GLSL has a built-in method called <code>texture2D</code> which takes in a sampler2D and 2D coordinates and outputs whatever is in the image. In our case, we need a <code>vec4</code> to get the variable that has the albedo data. And we can access its fields with the .r, .g, .b suffixes (we can actually do this with any vector in GLSL, not just the one that has color data, as GLSL doesn&rsquo;t see any difference between those, but this is really convenient, isn&rsquo;t it?). In the end, we just add the modified albedo to the specular data and the ambient light, and we have our fragment color ready!</p>
 
@@ -838,7 +841,7 @@ private:
 
 <p>Keep in mind that this is NOT a dot or cross product, it&rsquo;s element-wise product of two vectors. Also, this would be much harder if the object wasn&rsquo;t static and at zero position in the world, sure. As we saw in day three of the series, you&rsquo;d need to calculate the <strong>TBN matrix</strong>. So keep that in mind if you want to use this in games.</p>
 
-<p><img src="/images/bcgiaw/interlude-final-result.png" alt="" /></p>
+<p><img src="/images/bcgiaw/interlude-final-result2.png" alt="" /></p>
 
 <h2 id="had-any-difficulty-following-any-of-this">Had any difficulty following any of this?</h2>
 

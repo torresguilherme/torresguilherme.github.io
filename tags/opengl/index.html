@@ -1,0 +1,205 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1"> <title>opengl - guilherme torres</title>
+ 
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta property="og:image" , content=> 
+    <link rel="stylesheet" href="/css/highlight.min.css">
+    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href="/css/diello.css">
+    <link rel="stylesheet" href="/css/main.css"> 
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-******",
+            enable_page_level_ads: true
+        });
+    </script>
+      <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [
+                ['$', '$'],
+                ['\\(', '\\)']
+            ],
+            displayMath: [
+                ['$$', '$$']
+            ],
+            processEscapes: true,
+            processEnvironments: true,
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+            TeX: {
+                equationNumbers: {
+                    autoNumber: "AMS"
+                },
+                extensions: ["AMSmath.js", "AMSsymbols.js"]
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        
+        
+        
+        var all = MathJax.Hub.getAllJax(),
+            i;
+        for (i = 0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+    MathJax.Hub.Config({
+        
+        TeX: {
+            equationNumbers: {
+                autoNumber: "AMS"
+            }
+        }
+    });
+</script>
+</head>
+
+<body>
+    
+    <!--[if lte IE 9]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+    <![endif]-->
+
+    
+    <div class="flex-column">
+        <div class="ads">
+    
+    
+</div>
+
+        <div class="home">
+            <div class="logo">
+                <h1><a href="/">opengl</a></h1>
+            </div>
+            <div class="navigation">
+    
+        
+        
+        
+        <a href="/" class="">home</a>
+        
+        <a href="/contact/" class="">yes, please bother me</a>
+        
+        <a href="/about/" class="">literally who??</a>
+        
+        <a href="/art/" class="">my arts and crafts</a>
+        
+        
+        <a href="javascript:void(0);" class="current">ARTICLE</a>
+        
+    
+</div>
+
+            <div>
+                
+                <article>
+                    <h3><a href="/post/interlude-bits-of-opengl-part-2/">&#10132; Interlude: Bits of OpenGL, part 2 (Basic Computer Graphics in a Week)</a></h3>
+                    <div class="less">
+                        <time>Published: Monday, Nov 18, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;25 minute read
+                    </div>
+                    
+                    
+                    <ul id="tags">
+                        <p>
+                            tags:   
+                            <a href="http://torresguilherme.github.io/tags/computer-science/ ">computer-science</a>    
+                            <a href="http://torresguilherme.github.io/tags/graphics/ ">graphics</a>    
+                            <a href="http://torresguilherme.github.io/tags/basic-cg-in-a-week/ ">basic-cg-in-a-week</a>    
+                            <a href="http://torresguilherme.github.io/tags/opengl/ ">opengl</a>  
+                        </p>
+                    </ul>
+                    
+                    
+                    <ul id="categories">
+                        <p>
+                            categories:   
+                            <a href="http://torresguilherme.github.io/categories/en-us/ ">en-us</a>  
+                        </p>
+                    </ul>
+                    <div class="em">This is an optional read for BCGIAW. In the first part, we did lots of things that may or may not have made sense. But now, time to actually see something on the screen! And isn&rsquo;t that fun?
+Let&rsquo;s pick up where we left off. Last time we did put something in the GPU memory, but we have no way of actually showing the data we&rsquo;ve imported in our program.</div>
+                    
+                    <small><a href="/post/interlude-bits-of-opengl-part-2/">Read More &gt;&gt;</a></small> 
+                    <article>
+                        
+                <article>
+                    <h3><a href="/post/interlude_bits_of_opengl/">&#10132; Interlude: Bits of OpenGL, part 1 (Basic Computer Graphics in a Week)</a></h3>
+                    <div class="less">
+                        <time>Published: Wednesday, Oct 30, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;16 minute read
+                    </div>
+                    
+                    
+                    <ul id="tags">
+                        <p>
+                            tags:   
+                            <a href="http://torresguilherme.github.io/tags/computer-science/ ">computer-science</a>    
+                            <a href="http://torresguilherme.github.io/tags/graphics/ ">graphics</a>    
+                            <a href="http://torresguilherme.github.io/tags/basic-cg-in-a-week/ ">basic-cg-in-a-week</a>    
+                            <a href="http://torresguilherme.github.io/tags/opengl/ ">opengl</a>  
+                        </p>
+                    </ul>
+                    
+                    
+                    <ul id="categories">
+                        <p>
+                            categories:   
+                            <a href="http://torresguilherme.github.io/categories/en-us/ ">en-us</a>  
+                        </p>
+                    </ul>
+                    <div class="em">EDIT 31/10/2019: thanks to @deccer for spotting some mistakes and design flaws on this post, they&rsquo;re now fixed.
+This is an optional read for BCGIAW. We met our transforms in day two, knew our 3D models in day three and integrated like mad men in day four. How about we put that into practice a little? It&rsquo;s been some time since I last posted here and it&rsquo;ll be some time until the next post comes out, too.</div>
+                    
+                    <small><a href="/post/interlude_bits_of_opengl/">Read More &gt;&gt;</a></small> 
+                    <article>
+                        
+            </div>
+            <div class="pages">
+                 Page 1 of 1 
+            </div>
+            <div class="line-dotted"></div>
+            <footer>
+    <div>
+    
+        &#xA9; 2019 by guangmean. All Rights Reserved.
+    
+    </div>
+</footer>
+
+        </div>
+        <div class="ads">
+    
+    
+</div>
+
+    </div>
+
+
+    <script src="/js/vendor/modernizr-3.6.0.min.js"></script>
+<script src="/js/vendor/jquery-3.3.1.min.js"></script>
+<script>window.jQuery || document.write('<script src="\/js/vendor/jquery-3.3.1.min.js"><\/script>')</script>
+<script src="/js/plugins.js"></script>
+<script src="/js/main.js"></script>  
+
+<script src="/js/vendor/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad();</script>
+                                                       
+
+<script>                                             
+    window.ga = function () { ga.q.push(arguments) }; ga.q = []; ga.l = +new Date;
+ga('create', 'UA-******', 'auto'); ga('send', 'pageview')
+</script>                                            
+<script src="//www.google-analytics.com/analytics.js" async defer></script>
+
+
+</body>
+
+</html>
