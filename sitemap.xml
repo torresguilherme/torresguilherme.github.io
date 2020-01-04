@@ -16,55 +16,60 @@
   
   <url>
     <loc>http://torresguilherme.github.io/categories/</loc>
-    <lastmod>2019-11-18T19:13:02-03:00</lastmod>
+    <lastmod>2019-11-21T19:57:02-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://torresguilherme.github.io/post/day_five_rasterisation_and_raytracing/</loc>
+    <lastmod>2019-11-21T19:57:02-03:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://torresguilherme.github.io/post/</loc>
+    <lastmod>2019-11-21T19:57:02-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://torresguilherme.github.io/tags/</loc>
+    <lastmod>2019-11-21T19:57:02-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://torresguilherme.github.io/tags/basic-cg-in-a-week/</loc>
+    <lastmod>2019-11-21T19:57:02-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://torresguilherme.github.io/tags/computer-science/</loc>
+    <lastmod>2019-11-21T19:57:02-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://torresguilherme.github.io/categories/en-us/</loc>
+    <lastmod>2019-11-21T19:57:02-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://torresguilherme.github.io/tags/graphics/</loc>
+    <lastmod>2019-11-21T19:57:02-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://torresguilherme.github.io/</loc>
+    <lastmod>2019-11-21T19:57:02-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://torresguilherme.github.io/post/interlude-bits-of-opengl-part-2/</loc>
     <lastmod>2019-11-18T19:13:02-03:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://torresguilherme.github.io/post/</loc>
-    <lastmod>2019-11-18T19:13:02-03:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://torresguilherme.github.io/tags/</loc>
-    <lastmod>2019-11-18T19:13:02-03:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://torresguilherme.github.io/tags/basic-cg-in-a-week/</loc>
-    <lastmod>2019-11-18T19:13:02-03:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://torresguilherme.github.io/tags/computer-science/</loc>
-    <lastmod>2019-11-18T19:13:02-03:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://torresguilherme.github.io/categories/en-us/</loc>
-    <lastmod>2019-11-18T19:13:02-03:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://torresguilherme.github.io/tags/graphics/</loc>
-    <lastmod>2019-11-18T19:13:02-03:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://torresguilherme.github.io/</loc>
-    <lastmod>2019-11-18T19:13:02-03:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>

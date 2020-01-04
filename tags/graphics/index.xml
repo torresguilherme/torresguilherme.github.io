@@ -6,10 +6,19 @@
     <description>Recent content in graphics on guilherme torres</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 18 Nov 2019 19:13:02 -0300</lastBuildDate>
+    <lastBuildDate>Thu, 21 Nov 2019 19:57:02 -0300</lastBuildDate>
     
 	<atom:link href="http://torresguilherme.github.io/tags/graphics/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Day five: rasterisation and raytracing (Basic Computer Graphics in a Week)</title>
+      <link>http://torresguilherme.github.io/post/day_five_rasterisation_and_raytracing/</link>
+      <pubDate>Thu, 21 Nov 2019 19:57:02 -0300</pubDate>
+      
+      <guid>http://torresguilherme.github.io/post/day_five_rasterisation_and_raytracing/</guid>
+      <description>After all the transforms, object modelling and lighting, how does the computer actually draw on the screen? We learn that today. After this day you&amp;rsquo;ll have the basics of the background to build a software rasteriser, even though you probably don&amp;rsquo;t want to do that, because hardware-accelerated rasterisation is just a lot better. But rasterising is still a quintessential part of how to draw graphics, and we&amp;rsquo;ll cover that briefly.</description>
+    </item>
     
     <item>
       <title>Interlude: Bits of OpenGL, part 2 (Basic Computer Graphics in a Week)</title>

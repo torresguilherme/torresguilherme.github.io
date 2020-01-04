@@ -1,0 +1,487 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1"> <title>Day five: rasterisation and raytracing (Basic Computer Graphics in a Week) - guilherme torres</title>
+ 
+    <meta name="keywords" content="">
+    <meta name="description" content="After all the transforms, object modelling and lighting, how does the computer actually draw on the screen? We learn that today.">
+    <meta property="og:image" , content=/images/bcgiaw/36samples.png> 
+    <link rel="stylesheet" href="/css/highlight.min.css">
+    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href="/css/diello.css">
+    <link rel="stylesheet" href="/css/main.css"> 
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-******",
+            enable_page_level_ads: true
+        });
+    </script>
+      <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [
+                ['$', '$'],
+                ['\\(', '\\)']
+            ],
+            displayMath: [
+                ['$$', '$$']
+            ],
+            processEscapes: true,
+            processEnvironments: true,
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+            TeX: {
+                equationNumbers: {
+                    autoNumber: "AMS"
+                },
+                extensions: ["AMSmath.js", "AMSsymbols.js"]
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        
+        
+        
+        var all = MathJax.Hub.getAllJax(),
+            i;
+        for (i = 0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+
+    MathJax.Hub.Config({
+        
+        TeX: {
+            equationNumbers: {
+                autoNumber: "AMS"
+            }
+        }
+    });
+</script>
+</head>
+
+<body>
+    
+    <!--[if lte IE 9]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+    <![endif]-->
+
+    
+    <div class="flex-column">
+        <div class="ads">
+    
+    
+</div>
+
+        <div class="home">
+            <div class="logo">
+                <h1><a href="/">guilherme torres</a></h1>
+            </div>
+            <div class="navigation">
+    
+        
+        
+        
+        <a href="/" class="">home</a>
+        
+        <a href="/contact/" class="">yes, please bother me</a>
+        
+        <a href="/about/" class="">literally who??</a>
+        
+        <a href="/art/" class="">my arts and crafts</a>
+        
+        
+        <a href="javascript:void(0);" class="current">ARTICLE</a>
+        
+    
+</div>
+
+            <div>
+                <article>
+                    <h3>Day five: rasterisation and raytracing (Basic Computer Graphics in a Week)</h3>
+                    <div class="less">
+                        <time>Published: Thursday, Nov 21, 2019</time>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;16 minute read&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Using 3274 words
+                    </div>
+                    
+                    
+                    <ul id="tags">
+                        <p>
+                            tags:   
+                            <a href="http://torresguilherme.github.io/tags/computer-science/ ">computer-science</a>    
+                            <a href="http://torresguilherme.github.io/tags/graphics/ ">graphics</a>    
+                            <a href="http://torresguilherme.github.io/tags/basic-cg-in-a-week/ ">basic-cg-in-a-week</a>  
+                        </p>
+                    </ul>
+                    
+                    
+                    <ul id="categories">
+                        <p>
+                            categories:   
+                            <a href="http://torresguilherme.github.io/categories/en-us/ ">en-us</a>  
+                        </p>
+                    </ul>
+                    <div class="em">
+
+<h3 id="after-all-the-transforms-object-modelling-and-lighting-how-does-the-computer-actually-draw-on-the-screen-we-learn-that-today">After all the transforms, object modelling and lighting, how does the computer actually draw on the screen? We learn that today.</h3>
+
+<p>After this day you&rsquo;ll have the basics of the background to build a software rasteriser, even though you probably don&rsquo;t want to do that, because hardware-accelerated rasterisation is just a lot better. But rasterising is still a quintessential part of how to draw graphics, and we&rsquo;ll cover that briefly.</p>
+
+<p>Another method to draw on the screen is by using <strong>raytracing</strong>. Notice that this is not only done in order to draw things, but to calculate illumination as well. Raytracing is very important, and it is the foundation of <strong>path tracing</strong> which is a widely used technique for non-real time, high quality rendering.</p>
+
+<p>The first step is acklowledging that <strong>your computer screen is not continuous, it is discrete.</strong></p>
+
+<p><img src="/images/bcgiaw/you-dont-say.png" width="400"></p>
+
+<p>No kidding, it is. Therefore, we need a way to draw stuff in rectangular pixels, and that will generate a consequence that we&rsquo;ll cover later, which is <strong>aliasing</strong>.</p>
+
+<h2 id="but-what-is-rasterisation">But what is rasterisation?</h2>
+
+<p><img src="/images/bcgiaw/discrete-line.png" alt="" /></p>
+
+<p><em>Discrete rasterized line. Rasterisation algorithms&rsquo; applications are not limited to making software renderers, but they can be used for image editing programs as well. This example was made in <a href="https://www.piskelapp.com/">Piskel</a>.</em></p>
+
+<p>If you&rsquo;re into strict, formal definitions you might say that rasterisation means <em>converting a continuous, projected model of an image to a discrete representation of itself</em>. If you&rsquo;re a simpler person however, you can say that rasterising means <em>drawing things using rectangular pixels</em>.</p>
+
+<p>This is done in a lot of ways depending on what is our representation of the models we&rsquo;re projecting onto the screen (remember day three?). The most common and simple one, however is a triangle mesh. So, naturally the question follows, how to rasterise a triangle mesh? We must draw its <strong>contours</strong> and <strong>paint whatever is within them with colors</strong>.</p>
+
+<h3 id="rasterising-a-polygon-line-using-the-bresenham-algorithm">Rasterising a polygon line using the Bresenham algorithm</h3>
+
+<p>First, on drawing lines, there&rsquo;s a canonical algorithm which goes back to the early 1960s (think that&rsquo;s old? You&rsquo;d be impressed at how many things in graphics are 50 years old paradigms or older). This is the <strong>Bresenham line algorithm</strong>, and it was designed by Jack Elton Bresenham when he worked for IBM back in the day.</p>
+
+<p>To picture and have an abstract idea of how Bresenham&rsquo;s algorithm works, imagine you&rsquo;re drawing a line defined as:</p>
+
+<p>$$
+y = mx + b
+$$</p>
+
+<p>given x and y coordinates in a 2D plane. We&rsquo;ll suppose that the (0, 0) point is in the top left. To simplify our life, let&rsquo;s just say we can only draw lines with $m$ ranging between $[0, 1]$. Which means that the line&rsquo;s angle with the x axis is less than 45 degrees. At first, it may seem like we&rsquo;re limiting ourselves, but there is a generalization of this algorithm that allows us to draw a line for any value of $m$.</p>
+
+<p>This is how this line would look like if it was put into a grid (<a href="https://www.cs.helsinki.fi/group/goa/mallinnus/lines/bresenh.html">credits for the image</a>):</p>
+
+<p><img src="/images/bcgiaw/bres1.png" alt="" /></p>
+
+<p>You can think of this grid as the values for the center of each pixel. Naturally, you can see that the pixel that will be colored is the closest to the line. Since its $m$ is between zero and one, we can start with the pixel that is closest to the start of the line $(x_0, y_0)$ and the rest is defined recursively: until you reach the end of the line, decide if the closest to the line is $(x_n + 1, y_n)$ or $(x_n + 1, y_n + 1)$ and paint it.</p>
+
+<p>Now for the more generalized Bresenham algorithm, we can use a similar criterium, but each slope range will have its respective axis being iterated (<a href="https://www.cs.helsinki.fi/group/goa/mallinnus/lines/bresenh.html">again, credits</a>):</p>
+
+<p><img src="/images/bcgiaw/bres2.png" alt="" /></p>
+
+<p>Even if the slope is infinite, you&rsquo;ll be able to use Bresenham&rsquo;s algorithm. All you need to do is to store $m$ as a $\frac{dx}{dy}$ and just use the variables for $dx$ and $dy$. A C implementation of the Bresenham algorithm can be found at <a href="https://rosettacode.org/wiki/Bitmap/Bresenham%27s_line_algorithm">Rosetta Code</a>:</p>
+
+<pre><code class="language-c">void line(int x0, int y0, int x1, int y1) {
+ 
+  int dx = abs(x1-x0), sx = x0&lt;x1 ? 1 : -1;
+  int dy = abs(y1-y0), sy = y0&lt;y1 ? 1 : -1; 
+  int err = (dx&gt;dy ? dx : -dy)/2, e2;
+ 
+  for(;;){
+    setPixel(x0,y0);
+    if (x0==x1 &amp;&amp; y0==y1) break;
+    e2 = err;
+    if (e2 &gt;-dx) { err -= dy; x0 += sx; }
+    if (e2 &lt; dy) { err += dx; y0 += sy; }
+  }
+}
+</code></pre>
+
+<p>In order to draw triangles, you can use Bresenham&rsquo;s line algorithm, combined with a method to find out whether the pixel is within the triangle borders. In order to do that, you&rsquo;d need a method to get all the pixels within 3 borders of a triangle (can you do it by yourself? If you can&rsquo;t, take a look at <a href="https://www.geeksforgeeks.org/check-whether-a-given-point-lies-inside-a-triangle-or-not/">a method to see if a pixel is within a triangle</a> and see if it helps).</p>
+
+<h3 id="the-visibility-problem">The visibility problem</h3>
+
+<p>A new problem arises. What if our triangle can&rsquo;t be seen for some reason? Maybe the coordinates it has been projected to are outside the pixel grid of the screen. Or maybe when we render our 3D scene we just drew a triangle in front of it. We&rsquo;d have wasted time and energy drawing something that isn&rsquo;t shown on the screen.</p>
+
+<p>And we hate spending energy for nothing. The polar ice caps melt when we do that. So how do we help save the planet?</p>
+
+<h3 id="clipping">Clipping</h3>
+
+<p>Clipping is an operation that intends to cut out what isn&rsquo;t in the view plane from the rendering algorithm. This can be achieved using fairly similar algorithms for both lines and polygons, which is what we&rsquo;ll see next.</p>
+
+<p>For a line, you need to know both its starting point and end point. How do we know if it&rsquo;s in the view plane? Well, we can elaborate the following conditions:</p>
+
+<ul>
+<li><p>If both endpoints are within the plane, there&rsquo;s no way a part of the line is outside the viewing plane, so we&rsquo;re free to rasterise it and go on with our lives.</p></li>
+
+<li><p>If one endpoint is within the plane and the other one isn&rsquo;t, it gets a little trickier. You have to decide from which $x_i$ or $y_i$ the line being rasterised goes beyond the viewing plane. But that&rsquo;s just one operation in code.</p></li>
+
+<li><p>If both endpoints are outside the grid, don&rsquo;t reject the line yet! There may be a part of it inside the grid. In order to check that out, you&rsquo;ll need to divide the viewing plane into 9 regions: the middle one is the one that&rsquo;s actually seen. The other ones are formed by the space that&rsquo;s outside of the pixel grid, like in the image below:</p></li>
+</ul>
+
+<p><img src="/images/bcgiaw/clipping-lines.png" alt="" /></p>
+
+<p><em>Example of the 4 cases of line positioning we&rsquo;re seeing right now. The viewing plane is in the middle, and the red lines divide it into 9 regions.</em></p>
+
+<ul>
+<li>Once we divided the viewing plane into these regions, we can decide whether the line with both endpoints outside the viewing grid needs to be drawn or not. We do that by <strong>checking if they&rsquo;re on the same side of the red line that separates them from the grid</strong>. If that isn&rsquo;t true, there is a part of the line that actually shows up on the screen.</li>
+</ul>
+
+<p>What was just described here is known as the <strong>Cohen-Sutherland line clipping algorithm</strong>.</p>
+
+<p>But clipping lines isn&rsquo;t quite enough, the polygons also need to be clipped. So how do we do it?</p>
+
+<p>A polygon clipping algorithm should be able to deal with both complex and concave polygons. Luckily there is an algorithm for that, which is very known, called the <strong>Sutherland-Hodgman&rsquo;s algorithm</strong>. Its main idea is to clip the polygon&rsquo;s edges sequentially through each one of the edges, and keeping in mind that the number of polygons to be drawn might increase during this operation.</p>
+
+<p>You can about clipping with more details <a href="https://www.cc.gatech.edu/grads/h/Hao-wei.Hsieh/Haowei.Hsieh/mm.html">here</a> or <a href="https://www.cs.uic.edu/~jbell/CourseNotes/ComputerGraphics/Clipping.html">here</a>.</p>
+
+<h3 id="z-buffering">Z-buffering</h3>
+
+<p>A new problem arises. What if one of our objects is hidden not because it&rsquo;s outside of the viewing box or frustum, but because something else is in front of it? That&rsquo;s when we need an old technique but still widely used these days, called <strong>Z-buffering</strong>.</p>
+
+<p>Its idea is pretty simple. For each fragment on the screen, there is a buffer in memory that keeps its $z$ position as well, instead of only the $(x, y)$. This is done in order to check if the z-position of the fragment is less than another one&rsquo;s, in this case, it should be drawn on top of the other.</p>
+
+<p>For a perspective projection, we can extract the $z&rsquo;$ position by doing:</p>
+
+<p>$$
+z&rsquo; = \frac{far +  near}{far - near} + \frac{1}{z} (\frac{-2 \cdot far \cdot near}{far - near})
+$$</p>
+
+<p>For an orthographic projection, it&rsquo;s fairly easier though:</p>
+
+<p>$$
+z&rsquo; = 2 \cdot \frac{z - near}{far - near} - 1
+$$</p>
+
+<p>Also, a quick interesting fact: in order to completely (or almost) eliminate Z-fighting (when two fragments have similar $z&rsquo;$ values and the polygons seem to blend their shapes), <strong>Grand Theft Auto V</strong> used a <strong>logarithmic Z-buffer</strong>, which adds a far greater precision near zero. You can find more interesting stuff about GTA V&rsquo;s graphics achievements in <a href="http://www.adriancourreges.com/blog/2015/11/02/gta-v-graphics-study/">this blog post</a>.</p>
+
+<h3 id="what-is-aliasing">What is aliasing?</h3>
+
+<p><img src="/images/bcgiaw/aliased-circle.png" alt="" /></p>
+
+<p><em>An example of aliased circle, made in Piskel.</em></p>
+
+<p>Aliasing is a problem not only in computer graphics, but in any field that requires replicating a continuous signal using discrete samples. The signal can be poorly represented by these samples. As in this picture, we see that the intention was drawing a circle, but it happens that this circle is <strong>aliased</strong>, which means, it has hard squares edges while it shouldn&rsquo;t really have any in theory. Aliasing also happens to lines. If you check the first image in the post, you&rsquo;ll see that low-res line looks more like some stairs.</p>
+
+<p>Bresenham&rsquo;s algorithm draws lines pretty fast, but it can&rsquo;t handle aliasing by itself, and sadly we cannot get completely rid of aliasing in computer graphics while we&rsquo;re using a discrete representation. But we can mitigate it. A popular anti-aliasing algorithm for lines, that makes the aliasing less evident to human eyes is <strong>Xiaolin Wu&rsquo;s algorithm</strong>.</p>
+
+<h3 id="xiaolin-wu-s-algorithm">Xiaolin Wu&rsquo;s algorithm</h3>
+
+<p><img src="/images/bcgiaw/linecontrast.png" width="400"></p>
+
+<p><em>Two lines in low resolution, one with anti-aliasing and the other, raw. Made with Krita.</em></p>
+
+<p>The idea of Xiaolin Wu&rsquo;s algorithm is not difficult. The line, instead of being rasterised like Bresenham does, is drawn between the two closest lines of pixels, and the intensity of each one is set according to the distance from the line to the center of each pixel.</p>
+
+<p>You can also do anti-aliased lines with the <strong>Gupta-Sproull Algorithm</strong>, which we won&rsquo;t be covering today, but you can read about it <a href="https://www.codingalpha.com/gupta-sproull-algorithm-c-program/">here</a>.</p>
+
+<h2 id="raytracing-a-new-but-old-rendering-method">Raytracing: a new but old rendering method</h2>
+
+<p>That&rsquo;s enough rasterising for today, don&rsquo;t you think? So we&rsquo;ll left off there and go on to <strong>raytracing</strong>, a very important drawing method in the past, present and future of graphics. The history behind ray tracing is maybe a lot older than that, but the term was coined in the computer graphics field around the early 1980&rsquo;s.</p>
+
+<p>The general idea is based on a rough interpretation of real life physics. A very simplified model (so roughly simplified you&rsquo;ll want to laugh at me if you&rsquo;re a physicist, but please don&rsquo;t judge me T.T) of how lighting works in real life is: it is transported in the shape of rays, then its color is absorbed and reflected by materials, while the ray itself reflected or refracted by some of them, and then the rays reach our eyes carrying all the colors that were reflected through it. What raytracing does is the reverse way: rays are shot from the camera until it meets a reflecting surface, and then they&rsquo;re traced to the light sources. The lighting operations (it can be a dot product lighting, which you should remember from day four&hellip; or not) are applied and the color of each pixel is set to the color found by these operations.</p>
+
+<p>That&rsquo;s basically it. In theory it is simpler than rasterising, isn&rsquo;t it? But in practice, we still have many questions unanswered.</p>
+
+<h3 id="if-rasterising-works-well-enough-is-very-fast-and-we-still-use-it-in-today-s-real-time-applications-why-worry-about-raytracing-at-all">If rasterising works well enough, is very fast and we still use it in today&rsquo;s real time applications, why worry about raytracing at all?</h3>
+
+<p><img src="/images/bcgiaw/raytracer-basic.png" alt="" /></p>
+
+<p><em>Example of ray traced image. We can represent both diffuse, dielectric and reflective materials and shadows easily with raytracing.</em></p>
+
+<p>With a simple raytracer you&rsquo;re able to generate very interesting images with features that you&rsquo;d need a far greater theoretical understanding of things to do in rasterisation. Also, even if you&rsquo;re not using raytracing in order to build a pure raytraced renderer, you can still do some cool things with it, like a very accurate global illumination, as we&rsquo;ll see in the next post of this series. Even simply raycasting (casting rays without actually dealing with reflections and refractions, just testing collisions) has numerous applications in game development. Not to mention, if you can do concurrent computation, raytracers are embarassingly parallel, so you can speed up a great deal of your code by making it concurrent.</p>
+
+<h3 id="launching-a-ray-from-the-camera-eye-through-the-pixel">Launching a ray from the camera eye, through the pixel</h3>
+
+<p>We&rsquo;ll start by shooting a ray from our camera eye (only one ray per pixel, for now). Each ray can be defined using the following expression:</p>
+
+<p>$$
+\vec{o} + t\vec{d}, t \geq 0
+$$</p>
+
+<p>given that $\vec{o}$ is the <strong>origin</strong> of the ray and $\vec{d}$ is the <strong>direction</strong>. $t$ is any real constant greater or equal to zero. If you draw that in a paper you&rsquo;ll see how this ray shoots from a given location to an indefinite length. This is going to be our ray of light.</p>
+
+<p>Now for the camera, it needs to have at least the following components:</p>
+
+<ul>
+<li><p>An eye, of course;</p></li>
+
+<li><p>The target vector;</p></li>
+
+<li><p>The up vector;</p></li>
+
+<li><p>A focus distance (the distance from the camera eye to the view plane where the scene will be projected);</p></li>
+
+<li><p>The aperture (how &ldquo;wide&rdquo; the camera is relative to the view plane), in degrees;</p></li>
+
+<li><p>The width and height of the display.</p></li>
+</ul>
+
+<p>Given those parameters, you can calculate the $\vec{d}$ for each ray, relative to each pixel $(i, j)$ you&rsquo;re sending a ray through. We can set the $\vec{o}$ as the camera eye. and after doing some calculation which I&rsquo;ll spare you the whole process right now, we&rsquo;ll find that:</p>
+
+<p>$$
+\vec{d} = [(2 (\frac{i + 0.5}{width}) - 1) (\tan{(\frac{aperture}{2})}) (\frac{width}{height}), (1 - 2(\frac{j + 0.5}{height})) (\tan{(\frac{aperture}{2})}), 1] - \vec{o}
+$$</p>
+
+<p>A much more detailed explanation of this calculation was given by <a href="https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-camera-rays/generating-camera-rays">Scratchapixel</a>.</p>
+
+<h3 id="how-do-we-test-collisions">How do we test collisions?</h3>
+
+<p>The next step is finding out if our ray hit something. How do we know it that&rsquo;s the case? It depends on the geometry of the shape we&rsquo;re talking about here. If we&rsquo;re talking about a <strong>sphere</strong>, which is the most classic object used in raytracers because the intersections are fairly cheap to find (and that&rsquo;s the reason why my raytracer has sphere shapes only, hehehe), it&rsquo;s just a second-degree equation.</p>
+
+<p>Let&rsquo;s elaborate this together.</p>
+
+<p>A sphere is defined by its implicit function:</p>
+
+<p>$$
+x^2 + y^2 + z^2 = r^2
+$$</p>
+
+<p>where $r$ is the radius of the sphere. Therefore, we can keep this sphere in memory with only four numbers, a three-dimensional $\vec{c}$ vector for its <strong>center</strong> and its radius $r$.</p>
+
+<p>There are three intersection possibilities between the ray and the sphere:</p>
+
+<ul>
+<li><p>They intersect at two points, which means the ray crosses over the sphere;</p></li>
+
+<li><p>They intersect at one point, in other words, it&rsquo;s a tangent ray to the sphere;</p></li>
+
+<li><p>They don&rsquo;t intersect at all.</p></li>
+</ul>
+
+<p><img src="/images/bcgiaw/sphere-intersections.png" alt="" /></p>
+
+<p><em>The three ray intersection cases for a sphere.</em></p>
+
+<p>But how do we calculate the $t$ that makes the ray intersect with the sphere? We can observe that, for every point $x$ in the sphere:</p>
+
+<p>$$
+||x-center||^2 = r^2
+$$</p>
+
+<p>and that for every point $x$ in the ray:</p>
+
+<p>$$
+x = \vec{o} + \vec{d}t
+$$</p>
+
+<p>We&rsquo;ll just make both $x$ equal:</p>
+
+<p>$$
+||\vec{o} + \vec{d}t - center||^2 = r^2
+$$</p>
+
+<p>And then we elaborate the equation further:</p>
+
+<p>$$
+||d||^2t^2 + 2(d \cdot (o - center))t + ||o \cdot center||^2 - r^2 = 0
+$$</p>
+
+<p>Can you see the $a^2x + bx + c$ equation there? We have:</p>
+
+<p>$$
+a = ||d||^2
+$$
+$$
+b = 2(d \cdot (o - center))
+$$
+$$
+c = ||o \cdot center||^2 - r^2
+$$
+and
+$$
+x = t
+$$</p>
+
+<p>In order to solve it, we can just apply Bhaskara&rsquo;s formula and we&rsquo;re done:</p>
+
+<p>$$
+\Delta = b^2 - 4ac
+$$
+$$
+x = \frac{- b \pm \sqrt{\Delta}}{2a}
+$$</p>
+
+<p>Since $\vec{d}$ is by definition an unit vector, $||d||^2 = 1$ and the whole thing can be simplified to:</p>
+
+<p>$$
+t = - (d \cdot (o - center)) \pm \sqrt{(d \cdot (o - center))^2 - (||o \cdot center||^2 - r^2)}
+$$</p>
+
+<p>If the result of the expression under the square root above is greater than zero, there are two intersection points. If it&rsquo;s just equal to zero, it&rsquo;s a tangent ray and there&rsquo;s one intersection. And if it&rsquo;s negative, there are no intersections.</p>
+
+<p>Of course, there&rsquo;s a lot more intersections to cover, but for an introductory post we&rsquo;ll keep it at that for now.</p>
+
+<h3 id="handling-aliasing-again">Handling aliasing again</h3>
+
+<p><img src="/images/bcgiaw/1sample.png" alt="" /></p>
+
+<p><em>Well that doesn&rsquo;t look very nice&hellip;</em></p>
+
+<p>Great, we have an aliasing problem again and this time Xiaolin Wu&rsquo;s algorithm is not an option. How do we make this a little bit smoother? We have an option that is rather simple and you already did most of the work required for it: multisampling.</p>
+
+<p>The principle is pretty simple. When you have only one ray per pixel, it either hit the object or it didn&rsquo;t. When you have multiple rays per pixel, though, there might be one pixel that is &ldquo;kinda&rdquo; there but not much. We can do this by, you guessed it, adding a tiny offset to a ray and firing lots of rays per pixel instead of just one. And we get this much better overall result, with 36 samples per pixel:</p>
+
+<p><img src="/images/bcgiaw/36samples.png" alt="" /></p>
+
+<h2 id="further-reading-and-how-to-make-your-own-raytracer">Further reading, and how to make your own raytracer!</h2>
+
+<p>We didn&rsquo;t cover a lot of stuff here like reflective/refractive materials, depth of field, motion blur, optimizations such as octrees and bounding volume hierarchies, Monte Carlo sampling, all that stuff. In fact, raytracing is a topic of study for many scientists nowdays and it&rsquo;s not something you can become an expert in just reading one blog post. But I still do what I can :). So, I&rsquo;ll point you in the right directions.</p>
+
+<ul>
+<li><p>If you want to make your own raytracer, one of the most recommended books for beginners is <a href="https://www.realtimerendering.com/raytracing/Ray%20Tracing%20in%20a%20Weekend.pdf">Ray Tracing in one Weekend by Peter Shirley</a>. Yes, it is possible to read it and do everything in one weekend. Though, if you know more, there is <a href="https://www.realtimerendering.com/raytracing/Ray%20Tracing_%20The%20Next%20Week.pdf">Ray Tracing: The Next Week</a> and <a href="https://www.realtimerendering.com/raytracing/Ray%20Tracing_%20the%20Rest%20of%20Your%20Life.pdf">Ray Tracing: the rest of your life</a>.</p></li>
+
+<li><p><a href="http://www.realtimerendering.com/raytracinggems/">Ray Tracing Gems</a> is another book that came out in 2019 about the topic.</p></li>
+
+<li><p>Need somewhere else to look for raytracing or rasterisation? <a href="http://www.realtimerendering.com/raytracinggems/">Scratchapixel</a> is also a great resource on both topics, and this post wouldn&rsquo;t be the same without it because it was one of my places to go when I was making my first ray tracers.</p></li>
+</ul>
+
+<p>Once again, it&rsquo;s hard for me to predict when the next post will come out, because my holidays are basically over now. But the topic is going to be <strong>global illumination and path tracing</strong>, so, make sure you&rsquo;re OK with shooting those rays before going on to the next one.</p>
+
+<p><a href="/post/day_one_introduction_basic_computer_graphics_in_a_week/">Day one - introduction</a></p>
+
+<p><a href="/post/day_two_transforms_basic_computer_graphics_in_a_week/">Day two - transforms</a></p>
+
+<p><a href="/post/day_three_modelling_basic_computer_graphics_in_a_week/">Day three - modelling</a></p>
+
+<p><a href="/post/day_four_local_illumination_and_materials/">Day four - local illumination and materials</a></p>
+
+<p><a href="/post/interlude_bits_of_opengl">Interlude - Bits of OpenGL, part 1</a></p>
+
+<p><a href="/post/interlude-bits-of-opengl-part-2">Interlude - Bits of OpenGL, part 2</a></p>
+
+<p><a href="/post/day_five_rasterisation_and_raytracing/">Day five - rasterisation and raytracing</a></p>
+</div>
+                    <br />
+                    <br />
+                    <div class="less">Page link: <a href="/post/day_five_rasterisation_and_raytracing/" class="pagelink">/post/day_five_rasterisation_and_raytracing/</a></div>
+                    <div class="line-dotted"></div>
+                    <article>
+            </div>
+            <footer>
+    <div>
+    
+        &#xA9; 2019 by guangmean. All Rights Reserved.
+    
+    </div>
+</footer>
+
+        </div>
+        <div class="ads">
+    
+    
+</div>
+
+    </div>
+
+
+    <script src="/js/vendor/modernizr-3.6.0.min.js"></script>
+<script src="/js/vendor/jquery-3.3.1.min.js"></script>
+<script>window.jQuery || document.write('<script src="\/js/vendor/jquery-3.3.1.min.js"><\/script>')</script>
+<script src="/js/plugins.js"></script>
+<script src="/js/main.js"></script>  
+
+<script src="/js/vendor/highlight.min.js"></script>  
+<script>hljs.initHighlightingOnLoad();</script>
+                                                       
+
+<script>                                             
+    window.ga = function () { ga.q.push(arguments) }; ga.q = []; ga.l = +new Date;
+ga('create', 'UA-******', 'auto'); ga('send', 'pageview')
+</script>                                            
+<script src="//www.google-analytics.com/analytics.js" async defer></script>
+
+
+</body>
+
+</html>
